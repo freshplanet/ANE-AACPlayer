@@ -68,7 +68,85 @@ package com.freshplanet.ane.AirMediaPlayer
 		public var logEnabled:Boolean = true;
 
 
+		/**
+		*
+		*/
+		public function loadUrl(url:String):void
+		{
 
+		}
+		
+		/**
+		*
+		*/
+		public function play(startTime:Number=0, loops:int=0, sndTransform:SoundTransform=null):SoundChannel
+		{
+			
+		}
+		
+		/**
+		*
+		*/
+		public function pause():void
+		{
+			
+		}
+		
+		/**
+		*
+		*/
+		public function close():void
+		{
+			
+		}
+
+		/**
+		*
+		*/
+		public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
+		{
+			
+		}
+
+		/**
+		* 
+		*/
+		public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
+		{
+			
+		}
+		
+		/** 
+		* Length in milliseconds 
+		*/
+		public function getLength():Number
+		{
+			
+		}
+		
+		/**
+		* 
+		*/
+		public function getBytesLoaded():uint
+		{
+			
+		}
+		
+		/**
+		* 
+		*/
+		public function getBytesTotal():int
+		{
+			
+		}
+		
+		/** 
+		* Progress in milliseconds
+		*/
+		public function getProgress():int
+		{
+			
+		}
 		
 
 		

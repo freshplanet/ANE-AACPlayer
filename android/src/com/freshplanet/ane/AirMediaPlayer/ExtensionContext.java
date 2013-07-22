@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
+import com.freshplanet.ane.AirMediaPlayer.functions.PlayFunction;
 
 public class ExtensionContext extends FREContext
 {
@@ -36,7 +37,7 @@ public class ExtensionContext extends FREContext
 	{
 		Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
 		
-
+		functions.put("play", new PlayFunction());
 		
 		return functions;
 	}
