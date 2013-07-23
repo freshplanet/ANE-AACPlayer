@@ -22,34 +22,30 @@ know when the player is ready, and then call the play() function.
 
     
 ```actionscript
-// Access the ANE like this
-var player:AirAACPlayer = AirAACPlayer.getInstance();
-
 // Load an url and listen to the AirAACPlayer.AAC_PLAYER_PREPARED event
-player.addEventListener(AirAACPlayer.AAC_PLAYER_PREPARED, onPlayerPrepared);
-player.loadUrl("http://www.example.com/url-to-your-file.mp4");
+AirAACPlayer.getInstance().addEventListener(AirAACPlayer.AAC_PLAYER_PREPARED, onPlayerPrepared);
+AirAACPlayer.getInstance().loadUrl("http://www.example.com/url-to-your-file.mp4");
 
 // Once the player is ready, you can start playing
-var onPlayerPrepared:Function = function(event:Event):void
-{
-    player.play();
-}
+var onPlayerPrepared:Function = function(event:Event):void {
+    AirAACPlayer.getInstance().play();
+};
 
 // Pause the playback
-player.pause();
+AirAACPlayer.getInstance().pause();
 
 // Start from a specific position (in milliseconds)
-player.play(4200);
+AirAACPlayer.getInstance().play(4200);
 
 // You have access to the current position and total length (in milliseconds)
-player.progress;
-player.length;
+AirAACPlayer.getInstance().progress;
+AirAACPlayer.getInstance().length;
 
 // Stop it
-player.stop();
+AirAACPlayer.getInstance().stop();
 
 // Don't forget to close when you don't need it anymore
-player.close();
+AirAACPlayer.getInstance().close();
 ```
 
 
