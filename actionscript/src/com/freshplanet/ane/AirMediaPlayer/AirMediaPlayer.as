@@ -69,7 +69,8 @@ package com.freshplanet.ane.AirMediaPlayer
 
 
 		/**
-		*
+		* Load a music stream url
+        * @param url:String
 		*/
 		public function loadUrl(url:String):void
 		{
@@ -77,7 +78,9 @@ package com.freshplanet.ane.AirMediaPlayer
 		}
 		
 		/**
-		*
+		* Start playing the stream.
+        * If the playback has been paused before, it will continue from this point.
+        * @param startTime:int the start time in milliseconds
 		*/
 		public function play(startTime:int=0):void
 		{
@@ -85,7 +88,7 @@ package com.freshplanet.ane.AirMediaPlayer
 		}
 		
 		/**
-		*
+		* Pause the playback
 		*/
 		public function pause():void
 		{
@@ -93,7 +96,8 @@ package com.freshplanet.ane.AirMediaPlayer
 		}
 		
 		/**
-		*
+		* Close the stream and release.
+        * Note that loadUrl() has to be called again before replaying if close has been called.
 		*/
 		public function close():void
 		{
