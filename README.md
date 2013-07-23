@@ -1,5 +1,5 @@
-Air Native Extension for Media Playback (Android)
-=================================================
+Air Native Extension for AAC Streaming (Android)
+================================================
 
 This is an [Air native extensions](http://www.adobe.com/devnet/air/native-extensions-for-air.html) 
 to interact with the native [MediaPlayer](http://developer.android.com/reference/android/media/MediaPlayer.html) 
@@ -10,18 +10,46 @@ The goal of this extension is to have better support for M4a (AAC) streaming on 
 Installation
 ------------
 
-The ANE binary (AirAmazonMP3.ane) is located in the *bin* folder. 
+The ANE binary (AirAACPlayer.ane) is located in the `bin` folder. 
 You should add it to your application project's Build Path and make sure to package it with your app 
 (more information [here](http://help.adobe.com/en_US/air/build/WS597e5dadb9cc1e0253f7d2fc1311b491071-8000.html)).
 
 Usage
 -----
 
-The ANE is still a WIP for now.
+In order to play a stream, you have to call the loadUrl() function, add an event listener to the instance to
+know when the player is ready, and then call the play() function.
 
     
 ```actionscript
-Example code
+// Access the ANE like this
+var player:AirAACPlayer = AirAACPlayer.getInstance();
+
+// Load an url and listen to the AirAACPlayer.AAC_PLAYER_PREPARED event
+player.addEventListener(AirAACPlayer.AAC_PLAYER_PREPARED, onPlayerPrepared);
+player.loadUrl("http://www.example.com/url-to-your-file.mp4");
+
+// Once the player is ready, you can start playing
+var onPlayerPrepared:Function = function(event:Event):void
+{
+    player.play();
+}
+
+// Pause the playback
+player.pause();
+
+// Start from a specific position (in milliseconds)
+player.play(4200);
+
+// You have access to the current position and total length (in milliseconds)
+player.progress;
+player.length;
+
+// Stop it
+player.stop();
+
+// Don't forget to close when you don't need it anymore
+player.close();
 ```
 
 
