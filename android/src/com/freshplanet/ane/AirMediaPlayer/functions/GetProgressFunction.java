@@ -5,7 +5,7 @@ import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.freshplanet.ane.AirMediaPlayer.Extension;
 
-public class PlayFunction implements FREFunction 
+public class GetProgressFunction implements FREFunction 
 {
 
     @Override
@@ -13,14 +13,8 @@ public class PlayFunction implements FREFunction
     {
         try
         {
-            if (args.length != 0)
-            {
-                // start from given time (in milliseconds)
-                int position = args[0].getAsInt();
-                Extension.context.mediaPlayer.seekTo(position);
-            }
-
-            Extension.context.mediaPlayer.start();
+            int position = Extension.context.mediaPlayer.getCurrentPosition();
+            return FREObject.newObject(position);
         }
         catch (Exception e)
         {

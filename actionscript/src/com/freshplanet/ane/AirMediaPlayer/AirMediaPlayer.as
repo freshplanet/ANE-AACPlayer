@@ -73,15 +73,15 @@ package com.freshplanet.ane.AirMediaPlayer
 		*/
 		public function loadUrl(url:String):void
 		{
-
+			_context.call("loadUrl", url);
 		}
 		
 		/**
 		*
 		*/
-		public function play(startTime:Number=0, loops:int=0, sndTransform:SoundTransform=null):SoundChannel
+		public function play(startTime:int=0):void
 		{
-			
+			_context.call("play", startTime);
 		}
 		
 		/**
@@ -89,7 +89,7 @@ package com.freshplanet.ane.AirMediaPlayer
 		*/
 		public function pause():void
 		{
-			
+			_context.call("pause");
 		}
 		
 		/**
@@ -97,55 +97,23 @@ package com.freshplanet.ane.AirMediaPlayer
 		*/
 		public function close():void
 		{
-			
-		}
-
-		/**
-		*
-		*/
-		public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
-		{
-			
-		}
-
-		/**
-		* 
-		*/
-		public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
-		{
-			
+			_context.call("close");
 		}
 		
 		/** 
 		* Length in milliseconds 
 		*/
-		public function getLength():Number
+		public function get length():int
 		{
-			
-		}
-		
-		/**
-		* 
-		*/
-		public function getBytesLoaded():uint
-		{
-			
-		}
-		
-		/**
-		* 
-		*/
-		public function getBytesTotal():int
-		{
-			
+			return _context.call("getLength") as int;
 		}
 		
 		/** 
 		* Progress in milliseconds
 		*/
-		public function getProgress():int
+		public function get progress():int
 		{
-			
+			return _context.call("getProgress") as int;
 		}
 		
 

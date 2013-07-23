@@ -5,22 +5,17 @@ import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.freshplanet.ane.AirMediaPlayer.Extension;
 
-public class PlayFunction implements FREFunction 
+public class LoadUrlFunction implements FREFunction 
 {
 
     @Override
     public FREObject call(FREContext context, FREObject[] args) 
-    {
+    {   
         try
         {
-            if (args.length != 0)
-            {
-                // start from given time (in milliseconds)
-                int position = args[0].getAsInt();
-                Extension.context.mediaPlayer.seekTo(position);
-            }
-
-            Extension.context.mediaPlayer.start();
+            String url = args[0].getAsString();
+            Extension.context.mediaPlayer.setDataSource(url);
+            Extension.context.mediaPlayer.prepare();
         }
         catch (Exception e)
         {

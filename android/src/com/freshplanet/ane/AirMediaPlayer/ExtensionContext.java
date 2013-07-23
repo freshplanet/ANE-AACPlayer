@@ -21,29 +21,43 @@ package com.freshplanet.ane.AirMediaPlayer;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.view.ViewGroup;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
-import com.freshplanet.ane.AirMediaPlayer.functions.PlayFunction;
+import com.freshplanet.ane.AirMediaPlayer.functions.*;
 
 public class ExtensionContext extends FREContext
 {
-	@Override
-	public void dispose() {}
+    public MediaPlayer mediaPlayer;
+    
+    @Override
+    public void dispose() {}
 
-	@Override
-	public Map<String, FREFunction> getFunctions()
-	{
-		Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
-		
-		functions.put("play", new PlayFunction());
-		
-		return functions;
-	}
-	
-	public ViewGroup getRootContainer()
-	{
-		return (ViewGroup)((ViewGroup)getActivity().findViewById(android.R.id.content)).getChildAt(0);
-	}
+    @Override
+    public Map<String, FREFunction> getFunctions()
+    {
+        Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
+        
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        
+        mediaPlayer.start();
+        
+        functions.put("loadUrl", new LoadUrlFunction());
+        functions.put("play", new PlayFunction());
+        functions.put("pause", new PauseFunction());
+        functions.put("close", new CloseFunction());
+        functions.put("getLength", new GetLengthFunction());
+        functions.put("getProgress", new GetProgressFunction());
+        
+        return functions;
+    }
+    
+    public ViewGroup getRootContainer()
+    {
+        return (ViewGroup)((ViewGroup)getActivity().findViewById(android.R.id.content)).getChildAt(0);
+    }
 }
