@@ -94,6 +94,14 @@ package com.freshplanet.ane.AirAACPlayer
 		{
 			_context.call("pause");
 		}
+
+		/**
+		* Stop the playback
+		*/
+		public function stop():void
+		{
+			_context.call("stop");
+		}
 		
 		/**
 		* Close the stream and release.

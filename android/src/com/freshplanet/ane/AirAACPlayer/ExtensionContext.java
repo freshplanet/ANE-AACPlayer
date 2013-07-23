@@ -44,6 +44,7 @@ public class ExtensionContext extends FREContext
         functions.put("loadUrl", new LoadUrlFunction());
         functions.put("play", new PlayFunction());
         functions.put("pause", new PauseFunction());
+        functions.put("stop", new StopFunction());
         functions.put("close", new CloseFunction());
         functions.put("getLength", new GetLengthFunction());
         functions.put("getProgress", new GetProgressFunction());
