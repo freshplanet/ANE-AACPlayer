@@ -32,12 +32,13 @@ package com.freshplanet.ane.AirAACPlayer
 		// 																						 //
 		// --------------------------------------------------------------------------------------//
 		
-		/** AirAACPlayer is supported on iOS and Android devices. */
+		public static const AAC_PLAYER_PREPARED:String = "AAC_PLAYER_PREPARED";
+
+		/** AirAACPlayer is supported on Android devices. */
 		public static function get isSupported():Boolean
 		{
-			var isIOS:Boolean = (Capabilities.manufacturer.indexOf("iOS") != -1);
 			var isAndroid:Boolean = (Capabilities.manufacturer.indexOf("Android") != -1)
-			return isIOS || isAndroid;
+			return isAndroid;
 		}
 		
 		public function AirAACPlayer()
@@ -148,9 +149,9 @@ package com.freshplanet.ane.AirAACPlayer
 			{
 				log(event.level);
 			}
-			else if (event.code == "AAC_PLAYER_PREPARED")
+			else if (event.code == AAC_PLAYER_PREPARED)
 			{
-				this.dispatchEvent(new Event(Event.COMPLETE));
+				dispatchEvent(new Event(event.code));
 			}
 		}
 		
