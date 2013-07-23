@@ -148,6 +148,10 @@ package com.freshplanet.ane.AirAACPlayer
 			{
 				log(event.level);
 			}
+			else if (event.code == "AAC_PLAYER_PREPARED")
+			{
+				this.dispatchEvent(new Event(Event.COMPLETE));
+			}
 		}
 		
 		private function log( message:String ):void

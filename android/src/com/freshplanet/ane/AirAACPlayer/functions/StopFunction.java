@@ -5,7 +5,7 @@ import android.util.Log;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
-import com.freshplanet.ane.AirAACPlayer.Extension;
+import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class StopFunction implements FREFunction {
 
@@ -14,7 +14,7 @@ public class StopFunction implements FREFunction {
     {
         try
         {
-            Extension.context.getPlayer().stop();
+            ((ExtensionContext) context).getPlayer().stop();
         }
         catch (Exception e)
         {

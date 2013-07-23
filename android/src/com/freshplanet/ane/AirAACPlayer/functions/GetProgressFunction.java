@@ -6,6 +6,7 @@ import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.freshplanet.ane.AirAACPlayer.Extension;
+import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class GetProgressFunction implements FREFunction 
 {
@@ -15,7 +16,7 @@ public class GetProgressFunction implements FREFunction
     {
         try
         {
-            int position = Extension.context.getPlayer().getCurrentPosition();
+            int position = ((ExtensionContext) context).getPlayer().getCurrentPosition();
             return FREObject.newObject(position);
         }
         catch (Exception e)

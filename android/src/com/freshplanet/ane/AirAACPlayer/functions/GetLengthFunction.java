@@ -6,6 +6,7 @@ import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.freshplanet.ane.AirAACPlayer.Extension;
+import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class GetLengthFunction implements FREFunction
 {
@@ -15,7 +16,7 @@ public class GetLengthFunction implements FREFunction
     {
         try
         {
-            int length = Extension.context.getPlayer().getDuration();
+            int length = ((ExtensionContext) context).getPlayer().getDuration();
             return FREObject.newObject(length);
         }
         catch (Exception e)

@@ -6,16 +6,17 @@ import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.freshplanet.ane.AirAACPlayer.Extension;
+import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class PauseFunction implements FREFunction
 {
 
     @Override
-    public FREObject call(FREContext arg0, FREObject[] args) 
+    public FREObject call(FREContext context, FREObject[] args) 
     {
         try
         {
-            Extension.context.getPlayer().pause();
+        	((ExtensionContext) context).getPlayer().pause();
         }
         catch (Exception e)
         {

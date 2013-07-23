@@ -6,6 +6,7 @@ import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
 import com.freshplanet.ane.AirAACPlayer.Extension;
+import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class PlayFunction implements FREFunction 
 {
@@ -19,7 +20,8 @@ public class PlayFunction implements FREFunction
             {
                 // start from given time (in milliseconds)
                 int position = args[0].getAsInt();
-                Extension.context.getPlayer().seekTo(position);
+                
+                ((ExtensionContext) context).getPlayer().seekTo(position);
             }
 
             Extension.context.getPlayer().start();
