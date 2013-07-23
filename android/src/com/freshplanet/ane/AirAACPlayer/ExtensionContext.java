@@ -16,7 +16,7 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////
 
-package com.freshplanet.ane.AirMediaPlayer;
+package com.freshplanet.ane.AirAACPlayer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
-import com.freshplanet.ane.AirMediaPlayer.functions.*;
+import com.freshplanet.ane.AirAACPlayer.functions.*;
 
 public class ExtensionContext extends FREContext
 {

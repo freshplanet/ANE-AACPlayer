@@ -16,7 +16,7 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////
 
-package com.freshplanet.ane.AirMediaPlayer;
+package com.freshplanet.ane.AirAACPlayer;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;

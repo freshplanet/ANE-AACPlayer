@@ -16,7 +16,7 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////
 
-package com.freshplanet.ane.AirMediaPlayer
+package com.freshplanet.ane.AirAACPlayer
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -24,7 +24,7 @@ package com.freshplanet.ane.AirMediaPlayer
 	import flash.external.ExtensionContext;
 	import flash.system.Capabilities;
 
-	public class AirMediaPlayer extends EventDispatcher
+	public class AirAACPlayer extends EventDispatcher
 	{
 		// --------------------------------------------------------------------------------------//
 		//																						 //
@@ -32,7 +32,7 @@ package com.freshplanet.ane.AirMediaPlayer
 		// 																						 //
 		// --------------------------------------------------------------------------------------//
 		
-		/** AirMediaPlayer is supported on iOS and Android devices. */
+		/** AirAACPlayer is supported on iOS and Android devices. */
 		public static function get isSupported():Boolean
 		{
 			var isIOS:Boolean = (Capabilities.manufacturer.indexOf("iOS") != -1);
@@ -40,7 +40,7 @@ package com.freshplanet.ane.AirMediaPlayer
 			return isIOS || isAndroid;
 		}
 		
-		public function AirMediaPlayer()
+		public function AirAACPlayer()
 		{
 			if (!_instance)
 			{
@@ -60,9 +60,9 @@ package com.freshplanet.ane.AirMediaPlayer
 			}
 		}
 		
-		public static function getInstance():AirMediaPlayer
+		public static function getInstance():AirAACPlayer
 		{
-			return _instance ? _instance:new AirMediaPlayer();
+			return _instance ? _instance:new AirAACPlayer();
 		}
 		
 		public var logEnabled:Boolean = true;
@@ -128,9 +128,9 @@ package com.freshplanet.ane.AirMediaPlayer
 		// 																						 //
 		// --------------------------------------------------------------------------------------//
 		
-		private static const EXTENSION_ID:String = "com.freshplanet.AirMediaPlayer";
+		private static const EXTENSION_ID:String = "com.freshplanet.AirAACPlayer";
 		
-		private static var _instance:AirMediaPlayer;
+		private static var _instance:AirAACPlayer;
 		
 		private var _context:ExtensionContext;
 		
@@ -144,7 +144,7 @@ package com.freshplanet.ane.AirMediaPlayer
 		
 		private function log( message:String ):void
 		{
-			if (logEnabled) trace("[AirMediaPlayer] " + message);
+			if (logEnabled) trace("[AirAACPlayer] " + message);
 		}
 	}
 }

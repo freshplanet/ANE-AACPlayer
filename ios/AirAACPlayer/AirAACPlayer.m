@@ -16,17 +16,17 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////
 
-#import "AirMediaPlayer.h"
+#import "AirAACPlayer.h"
 
-FREContext AirMediaPlayerCtx = nil;
+FREContext AirAACPlayerCtx = nil;
 
-@implementation AirMediaPlayer
+@implementation AirAACPlayer
 
 #pragma mark - Singleton
 
-static AirMediaPlayer *sharedInstance = nil;
+static AirAACPlayer *sharedInstance = nil;
 
-+ (AirMediaPlayer *)sharedInstance
++ (AirAACPlayer *)sharedInstance
 {
     if (sharedInstance == nil)
     {
@@ -46,19 +46,19 @@ static AirMediaPlayer *sharedInstance = nil;
     return self;
 }
 
-#pragma mark - AirMediaPlayer
+#pragma mark - AirAACPlayer
 
 + (void)dispatchEvent:(NSString *)eventName withInfo:(NSString *)info
 {
-    if (AirMediaPlayerCtx != nil)
+    if (AirAACPlayerCtx != nil)
     {
-        FREDispatchStatusEventAsync(AirMediaPlayerCtx, (const uint8_t *)[eventName UTF8String], (const uint8_t *)[info UTF8String]);
+        FREDispatchStatusEventAsync(AirAACPlayerCtx, (const uint8_t *)[eventName UTF8String], (const uint8_t *)[info UTF8String]);
     }
 }
 
 + (void)log:(NSString *)message
 {
-    [AirMediaPlayer dispatchEvent:@"LOGGING" withInfo:message];
+    [AirAACPlayer dispatchEvent:@"LOGGING" withInfo:message];
 }
 
 @end
@@ -66,7 +66,7 @@ static AirMediaPlayer *sharedInstance = nil;
 
 #pragma mark - C interface
 
-void AirMediaPlayerContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx,
+void AirAACPlayerContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx,
                         uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet) 
 {
     // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
@@ -77,16 +77,16 @@ void AirMediaPlayerContextInitializer(void* extData, const uint8_t* ctxType, FRE
     
     *functionsToSet = func;
     
-    AirMediaPlayerCtx = ctx;
+    AirAACPlayerCtx = ctx;
 }
 
-void AirMediaPlayerContextFinalizer(FREContext ctx) { }
+void AirAACPlayerContextFinalizer(FREContext ctx) { }
 
-void AirMediaPlayerInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet)
+void AirAACPlayerInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet)
 {
 	*extDataToSet = NULL;
-	*ctxInitializerToSet = &AirMediaPlayerContextInitializer;
-	*ctxFinalizerToSet = &AirMediaPlayerContextFinalizer;
+	*ctxInitializerToSet = &AirAACPlayerContextInitializer;
+	*ctxFinalizerToSet = &AirAACPlayerContextFinalizer;
 }
 
-void AirMediaPlayerFinalizer(void *extData) { }
+void AirAACPlayerFinalizer(void *extData) { }

@@ -18,7 +18,7 @@
 
 #import "FlashRuntimeExtensions.h"
 
-@interface AirMediaPlayer : NSObject
+@interface AirAACPlayer : NSObject
 
 + (id)sharedInstance;
 
@@ -29,7 +29,7 @@
 
 
 // ANE Setup
-void AirMediaPlayerContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet);
-void AirMediaPlayerContextFinalizer(FREContext ctx);
-void AirMediaPlayerInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet);
-void AirMediaPlayerFinalizer(void *extData);
+void AirAACPlayerContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet);
+void AirAACPlayerContextFinalizer(FREContext ctx);
+void AirAACPlayerInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet);
+void AirAACPlayerFinalizer(void *extData);

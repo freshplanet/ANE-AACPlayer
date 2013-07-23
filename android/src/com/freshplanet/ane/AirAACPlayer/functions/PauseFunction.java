@@ -1,9 +1,9 @@
-package com.freshplanet.ane.AirMediaPlayer.functions;
+package com.freshplanet.ane.AirAACPlayer.functions;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
-import com.freshplanet.ane.AirMediaPlayer.Extension;
+import com.freshplanet.ane.AirAACPlayer.Extension;
 
 public class PauseFunction implements FREFunction
 {
