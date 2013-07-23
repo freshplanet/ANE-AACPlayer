@@ -1,5 +1,7 @@
 package com.freshplanet.ane.AirAACPlayer.functions;
 
+import android.util.Log;
+
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
@@ -13,10 +15,11 @@ public class PauseFunction implements FREFunction
     {
         try
         {
-            Extension.context.mediaPlayer.pause();
+            Extension.context.getPlayer().pause();
         }
         catch (Exception e)
         {
+        	Log.e("[AirAACPlayer]", "Error on pause");
             e.printStackTrace();
         }
         

@@ -1,5 +1,7 @@
 package com.freshplanet.ane.AirAACPlayer.functions;
 
+import android.util.Log;
+
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
@@ -13,12 +15,16 @@ public class CloseFunction implements FREFunction
     {
         try
         {
-            Extension.context.mediaPlayer.stop();
-            Extension.context.mediaPlayer.release();
-            Extension.context.mediaPlayer = null;
+        	if (Extension.context.getPlayer() != null)
+        	{
+	            Extension.context.getPlayer().stop();
+	            Extension.context.getPlayer().release();
+	            Extension.context.setPlayer(null);
+        	}
         }
         catch (Exception e)
         {
+        	Log.e("[AirAACPlayer]", "Error on close");
             e.printStackTrace();
         }
         

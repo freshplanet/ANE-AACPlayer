@@ -1,5 +1,7 @@
 package com.freshplanet.ane.AirAACPlayer.functions;
 
+import android.util.Log;
+
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
@@ -14,11 +16,12 @@ public class LoadUrlFunction implements FREFunction
         try
         {
             String url = args[0].getAsString();
-            Extension.context.mediaPlayer.setDataSource(url);
-            Extension.context.mediaPlayer.prepare();
+            Extension.context.getPlayer().setDataSource(url);
+            Extension.context.getPlayer().prepare();
         }
         catch (Exception e)
         {
+        	Log.e("[AirAACPlayer]", "Error on load");
             e.printStackTrace();
         }
         

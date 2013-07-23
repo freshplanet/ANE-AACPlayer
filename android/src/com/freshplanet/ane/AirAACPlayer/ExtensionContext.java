@@ -31,7 +31,7 @@ import com.freshplanet.ane.AirAACPlayer.functions.*;
 
 public class ExtensionContext extends FREContext
 {
-    public MediaPlayer mediaPlayer;
+    private MediaPlayer _mediaPlayer;
     
     @Override
     public void dispose() {}
@@ -40,11 +40,6 @@ public class ExtensionContext extends FREContext
     public Map<String, FREFunction> getFunctions()
     {
         Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
-        
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        
-        mediaPlayer.start();
         
         functions.put("loadUrl", new LoadUrlFunction());
         functions.put("play", new PlayFunction());
@@ -59,5 +54,21 @@ public class ExtensionContext extends FREContext
     public ViewGroup getRootContainer()
     {
         return (ViewGroup)((ViewGroup)getActivity().findViewById(android.R.id.content)).getChildAt(0);
+    }
+    
+    public MediaPlayer getPlayer()
+    {
+    	if (_mediaPlayer == null)
+    	{
+    		_mediaPlayer = new MediaPlayer();
+            _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    	}
+    	
+    	return _mediaPlayer;
+    }
+    
+    public void setPlayer(MediaPlayer player)
+    {
+    	this._mediaPlayer = player;
     }
 }

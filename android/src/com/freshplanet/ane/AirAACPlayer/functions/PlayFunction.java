@@ -1,5 +1,7 @@
 package com.freshplanet.ane.AirAACPlayer.functions;
 
+import android.util.Log;
+
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
@@ -17,13 +19,14 @@ public class PlayFunction implements FREFunction
             {
                 // start from given time (in milliseconds)
                 int position = args[0].getAsInt();
-                Extension.context.mediaPlayer.seekTo(position);
+                Extension.context.getPlayer().seekTo(position);
             }
 
-            Extension.context.mediaPlayer.start();
+            Extension.context.getPlayer().start();
         }
         catch (Exception e)
         {
+        	Log.e("[AirAACPlayer]", "Error on play");
             e.printStackTrace();
         }
         
