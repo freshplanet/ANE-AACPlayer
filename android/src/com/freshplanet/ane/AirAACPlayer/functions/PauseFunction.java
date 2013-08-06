@@ -14,11 +14,11 @@ public class PauseFunction implements FREFunction
     {
         try
         {
-        	((ExtensionContext) context).getPlayer().pause();
+            ((ExtensionContext) context).getPlayer().pause();
         }
         catch (Exception e)
         {
-        	Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on pause");
+            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on pause");
             e.printStackTrace();
         }
         

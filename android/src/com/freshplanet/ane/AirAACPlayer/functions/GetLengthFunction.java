@@ -19,7 +19,7 @@ public class GetLengthFunction implements FREFunction
         }
         catch (Exception e)
         {
-        	Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on get length");
+            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on get length");
             e.printStackTrace();
         }
         

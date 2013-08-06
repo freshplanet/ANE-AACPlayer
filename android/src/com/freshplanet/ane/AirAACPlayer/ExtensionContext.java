@@ -59,17 +59,17 @@ public class ExtensionContext extends FREContext
     
     public MediaPlayer getPlayer()
     {
-    	if (_mediaPlayer == null)
-    	{
-    		_mediaPlayer = new MediaPlayer();
+        if (_mediaPlayer == null)
+        {
+            _mediaPlayer = new MediaPlayer();
             _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-    	}
-    	
-    	return _mediaPlayer;
+        }
+        
+        return _mediaPlayer;
     }
     
     public void setPlayer(MediaPlayer player)
     {
-    	this._mediaPlayer = player;
+        this._mediaPlayer = player;
     }
 }

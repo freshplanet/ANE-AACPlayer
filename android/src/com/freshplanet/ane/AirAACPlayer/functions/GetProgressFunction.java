@@ -19,7 +19,7 @@ public class GetProgressFunction implements FREFunction
         }
         catch (Exception e)
         {
-        	Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on get progress");
+            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on get progress");
             e.printStackTrace();
         }
         

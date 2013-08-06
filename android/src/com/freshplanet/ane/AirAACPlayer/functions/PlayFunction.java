@@ -26,7 +26,7 @@ public class PlayFunction implements FREFunction
         }
         catch (Exception e)
         {
-        	Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on play");
+            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on play");
             e.printStackTrace();
         }
         

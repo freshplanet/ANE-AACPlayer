@@ -8,7 +8,7 @@ import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class StopFunction implements FREFunction {
 
-	@Override
+    @Override
     public FREObject call(FREContext context, FREObject[] args) 
     {
         try
@@ -17,7 +17,7 @@ public class StopFunction implements FREFunction {
         }
         catch (Exception e)
         {
-        	Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on stop");
+            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on stop");
             e.printStackTrace();
         }
         

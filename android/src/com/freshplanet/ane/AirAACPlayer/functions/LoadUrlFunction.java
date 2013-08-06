@@ -18,7 +18,7 @@ public class LoadUrlFunction implements FREFunction
     {   
         try
         {
-        	ExtensionContext extensionContext = (ExtensionContext) context;
+            ExtensionContext extensionContext = (ExtensionContext) context;
             String url = args[0].getAsString();
             
             Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Loading url " + url);
@@ -27,18 +27,18 @@ public class LoadUrlFunction implements FREFunction
             extensionContext.getPlayer().prepareAsync();
             
             OnPreparedListener listener = new OnPreparedListener() {
-				@Override
-				public void onPrepared(MediaPlayer mp) {
-					Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Player prepared");
-					Extension.context.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
-				}
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Player prepared");
+                    Extension.context.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
+                }
             };
             
             extensionContext.getPlayer().setOnPreparedListener(listener);
         }
         catch (Exception e)
         {
-        	Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on load");
+            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on load");
             e.printStackTrace();
         }
         

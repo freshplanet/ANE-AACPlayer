@@ -14,15 +14,15 @@ public class CloseFunction implements FREFunction
     {
         try
         {
-        	ExtensionContext extensionContext = (ExtensionContext) context;
+            ExtensionContext extensionContext = (ExtensionContext) context;
 
-    		extensionContext.getPlayer().stop();
-    		extensionContext.getPlayer().release();
-    		extensionContext.setPlayer(null);
+            extensionContext.getPlayer().stop();
+            extensionContext.getPlayer().release();
+            extensionContext.setPlayer(null);
         }
         catch (Exception e)
         {
-        	Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on close");
+            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on close");
             e.printStackTrace();
         }
         
