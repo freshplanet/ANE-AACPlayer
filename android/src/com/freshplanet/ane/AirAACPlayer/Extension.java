@@ -23,6 +23,7 @@ import com.adobe.fre.FREExtension;
 
 public class Extension implements FREExtension
 {
+	public static final String TAG = "AirAACPlayer";
     public static ExtensionContext context;
     
     @Override

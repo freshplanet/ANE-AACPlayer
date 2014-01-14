@@ -32,6 +32,7 @@ import com.freshplanet.ane.AirAACPlayer.functions.*;
 public class ExtensionContext extends FREContext
 {
     private MediaPlayer _mediaPlayer;
+    private String _mediaUrl;
     
     @Override
     public void dispose() {}
@@ -50,6 +51,16 @@ public class ExtensionContext extends FREContext
         functions.put("getProgress", new GetProgressFunction());
         
         return functions;
+    }
+    
+    public void setMediaUrl( String url ) 
+    {
+    	_mediaUrl = url;
+    }
+    
+    public String getMediaUrl() 
+    {
+    	return _mediaUrl;
     }
     
     public ViewGroup getRootContainer()

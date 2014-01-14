@@ -23,23 +23,29 @@ public class LoadUrlFunction implements FREFunction
             
             Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Loading url " + url);
             
-            extensionContext.getPlayer().setDataSource(url);
-            extensionContext.getPlayer().prepareAsync();
-            
-            OnPreparedListener listener = new OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Player prepared");
-                    Extension.context.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
-                }
-            };
-            
-            extensionContext.getPlayer().setOnPreparedListener(listener);
+            if(!extensionContext.getMediaUrl().equals(url)) {
+            	extensionContext.setMediaUrl(url);
+            	extensionContext.getPlayer().reset();
+            	extensionContext.getPlayer().setDataSource(url);
+            	extensionContext.getPlayer().prepareAsync();
+            	OnPreparedListener listener = new OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Player prepared");
+                        Extension.context.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
+                    }
+                };
+                extensionContext.getPlayer().setOnPreparedListener(listener);
+            } else {
+            	Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Player prepared");
+                Extension.context.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
+            }
+
         }
         catch (Exception e)
         {
             Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on load");
-            e.printStackTrace();
+            Log.e(Extension.TAG, "Error loading url: " + e.getMessage());
         }
         
         return null;
