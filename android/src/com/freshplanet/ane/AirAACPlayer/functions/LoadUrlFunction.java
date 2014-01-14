@@ -23,7 +23,7 @@ public class LoadUrlFunction implements FREFunction
             
             Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Loading url " + url);
             
-            if(extensionContext.getMediaUrl() != url) {
+            if(!extensionContext.getMediaUrl().equals(url)) {
             	extensionContext.setMediaUrl(url);
             	extensionContext.getPlayer().reset();
             	extensionContext.getPlayer().setDataSource(url);
