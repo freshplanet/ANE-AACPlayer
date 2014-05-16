@@ -122,10 +122,7 @@ package com.freshplanet.ane.AirAACPlayer
         //                                                                                       //
         // --------------------------------------------------------------------------------------//
         
-        private static const EXTENSION_ID:String = "com.freshplanet.AirAACPlayer";
-        
-        private static var _instance:AirAACPlayer;
-        
+        private static const EXTENSION_ID:String = "com.freshplanet.AirAACPlayer"; 
         private var _context:ExtensionContext;
         
         private function onStatus( event:StatusEvent ):void
