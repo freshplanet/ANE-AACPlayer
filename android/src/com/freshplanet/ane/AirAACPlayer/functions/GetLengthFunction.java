@@ -8,22 +8,24 @@ import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class GetLengthFunction implements FREFunction
 {
+    private ExtensionContext extensionContext;
 
     @Override
     public FREObject call(FREContext context, FREObject[] args)
     {
+        extensionContext = (ExtensionContext) context;
+
         try
         {
-            int length = ((ExtensionContext) context).getPlayer().getDuration();
+            int length = extensionContext.getPlayer().getDuration();
             return FREObject.newObject(length);
         }
         catch (Exception e)
         {
-            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on get length");
+            extensionContext.dispatchStatusEventAsync("LOGGING", "[Error] Error on get length");
             e.printStackTrace();
         }
         
         return null;
     }
-
 }

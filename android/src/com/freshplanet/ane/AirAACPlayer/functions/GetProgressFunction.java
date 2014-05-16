@@ -8,22 +8,24 @@ import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class GetProgressFunction implements FREFunction 
 {
+    private ExtensionContext extensionContext;
 
     @Override
     public FREObject call(FREContext context, FREObject[] args) 
     {
+        extensionContext = (ExtensionContext) context;
+
         try
         {
-            int position = ((ExtensionContext) context).getPlayer().getCurrentPosition();
+            int position = extensionContext.getPlayer().getCurrentPosition();
             return FREObject.newObject(position);
         }
         catch (Exception e)
         {
-            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on get progress");
+            extensionContext.dispatchStatusEventAsync("LOGGING", "[Error] Error on get progress");
             e.printStackTrace();
         }
         
         return null;
     }
-
 }

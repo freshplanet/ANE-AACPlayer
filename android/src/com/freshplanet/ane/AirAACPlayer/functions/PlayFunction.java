@@ -8,29 +8,30 @@ import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class PlayFunction implements FREFunction 
 {
+    private ExtensionContext extensionContext;
 
     @Override
     public FREObject call(FREContext context, FREObject[] args) 
     {
+        extensionContext = (ExtensionContext) context;
+
         try
         {
             if (args.length != 0)
             {
                 // start from given time (in milliseconds)
                 int position = args[0].getAsInt();
-                
-                ((ExtensionContext) context).getPlayer().seekTo(position);
+                extensionContext.getPlayer().seekTo(position);
             }
 
-            Extension.context.getPlayer().start();
+            extensionContext.getPlayer().start();
         }
         catch (Exception e)
         {
-            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on play");
+            extensionContext.dispatchStatusEventAsync("LOGGING", "[Error] Error on play");
             e.printStackTrace();
         }
         
         return null;
     }
-
 }
