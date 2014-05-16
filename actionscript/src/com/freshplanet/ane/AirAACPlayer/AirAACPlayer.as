@@ -43,31 +43,16 @@ package com.freshplanet.ane.AirAACPlayer
         
         public function AirAACPlayer()
         {
-            if (!_instance)
+            _context = ExtensionContext.createExtensionContext(EXTENSION_ID, null);
+            if (!_context)
             {
-                _context = ExtensionContext.createExtensionContext(EXTENSION_ID, null);
-                if (!_context)
-                {
-                    log("ERROR - Extension context is null. Please check if extension.xml is setup correctly.");
-                    return;
-                }
-                _context.addEventListener(StatusEvent.STATUS, onStatus);
-                
-                _instance = this;
+                log("ERROR - Extension context is null. Please check if extension.xml is setup correctly.");
+                return;
             }
-            else
-            {
-                throw Error("This is a singleton, use getInstance(), do not call the constructor directly.");
-            }
-        }
-        
-        public static function getInstance():AirAACPlayer
-        {
-            return _instance ? _instance:new AirAACPlayer();
+            _context.addEventListener(StatusEvent.STATUS, onStatus);
         }
         
         public var logEnabled:Boolean = true;
-
 
         /**
         * Load a music stream url
@@ -137,10 +122,7 @@ package com.freshplanet.ane.AirAACPlayer
         //                                                                                       //
         // --------------------------------------------------------------------------------------//
         
-        private static const EXTENSION_ID:String = "com.freshplanet.AirAACPlayer";
-        
-        private static var _instance:AirAACPlayer;
-        
+        private static const EXTENSION_ID:String = "com.freshplanet.AirAACPlayer"; 
         private var _context:ExtensionContext;
         
         private function onStatus( event:StatusEvent ):void
