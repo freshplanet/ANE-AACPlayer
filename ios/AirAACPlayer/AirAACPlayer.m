@@ -113,9 +113,11 @@ DEFINE_ANE_FUNCTION(getLength)
     double len = 0.0;
     if(soundPlayer)
         len = soundPlayer.duration;
-        
+    
+    int32_t milliseconds = (int32_t)(len*1000);
+    
     FREObject ret;
-    FRENewObjectFromDouble(len, &ret);
+    FRENewObjectFromInt32(milliseconds, &ret);
     return ret;
 }
 
@@ -123,12 +125,19 @@ DEFINE_ANE_FUNCTION(getProgress)
 {
     AVAudioPlayer* soundPlayer = getPlayerFromContext(context);
     
-    double progress = 0.0;
+    double progress;
     if(soundPlayer)
+        progress = soundPlayer.duration;
+    else
+        progress = 0.0;
+    
+    if(soundPlayer && soundPlayer.isPlaying)
         progress = soundPlayer.currentTime;
     
+    int32_t milliseconds = (int32_t)(progress*1000);
     FREObject ret;
-    FRENewObjectFromDouble(progress, &ret);
+    FRENewObjectFromInt32(milliseconds, &ret);
+    
     return ret;
 }
 
