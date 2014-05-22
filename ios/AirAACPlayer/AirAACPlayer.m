@@ -95,14 +95,15 @@ DEFINE_ANE_FUNCTION(pauseFunction)
 DEFINE_ANE_FUNCTION(stop)
 {
     AVAudioPlayer* soundPlayer = getPlayerFromContext(context);
-    [soundPlayer pause];
+    [soundPlayer stop];
+    [soundPlayer setCurrentTime:0];
     return NULL;
 }
 
 DEFINE_ANE_FUNCTION(closeFunction)
 {
     AVAudioPlayer* soundPlayer = getPlayerFromContext(context);
-    [soundPlayer pause];
+    [soundPlayer stop];
     return NULL;
 }
 
