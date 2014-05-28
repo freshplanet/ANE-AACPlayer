@@ -12,18 +12,20 @@ import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class LoadUrlFunction implements FREFunction 
 {
+    private ExtensionContext extensionContext;
 
     @Override
     public FREObject call(FREContext context, FREObject[] args) 
     {   
+        extensionContext = (ExtensionContext) context;
+
         try
         {
-            ExtensionContext extensionContext = (ExtensionContext) context;
             String url = args[0].getAsString();
-            
-            Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Loading url " + url);
+            extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Loading url " + url + " - existing url: " + extensionContext.getMediaUrl());
             
             if(!url.equals(extensionContext.getMediaUrl())) {
+
             	extensionContext.setMediaUrl(url);
             	extensionContext.getPlayer().reset();
             	extensionContext.getPlayer().setDataSource(url);
@@ -31,24 +33,24 @@ public class LoadUrlFunction implements FREFunction
             	OnPreparedListener listener = new OnPreparedListener() {
                     @Override
                     public void onPrepared(MediaPlayer mp) {
-                        Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Player prepared");
-                        Extension.context.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
+                        extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Player prepared");
+                        extensionContext.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
                     }
                 };
                 extensionContext.getPlayer().setOnPreparedListener(listener);
+
             } else {
-            	Extension.context.dispatchStatusEventAsync("LOGGING", "[Info] Player prepared");
-                Extension.context.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
+            	extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Player already prepared");
+                extensionContext.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
             }
 
         }
         catch (Exception e)
         {
-            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on load");
+            extensionContext.dispatchStatusEventAsync("LOGGING", "[Error] Error on load");
             Log.e(Extension.TAG, "Error loading url: " + e.getMessage());
         }
         
         return null;
     }
-
 }

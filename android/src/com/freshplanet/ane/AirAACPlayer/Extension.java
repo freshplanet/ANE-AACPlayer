@@ -24,26 +24,16 @@ import com.adobe.fre.FREExtension;
 public class Extension implements FREExtension
 {
 	public static final String TAG = "AirAACPlayer";
-    public static ExtensionContext context;
-    
+
     @Override
     public FREContext createContext(String arg0)
     {
-        context = new ExtensionContext();
-        return context;
+        return new ExtensionContext();
     }
 
     @Override
-    public void dispose()
-    {
-        context = null;
-    }
+    public void dispose() { }
 
     @Override
     public void initialize() { }
-    
-    public static void log(String message)
-    {
-        context.dispatchStatusEventAsync("LOGGING", message);
-    }
 }

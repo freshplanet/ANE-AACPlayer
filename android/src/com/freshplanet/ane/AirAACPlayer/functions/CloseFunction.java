@@ -8,14 +8,15 @@ import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class CloseFunction implements FREFunction 
 {
+    private ExtensionContext extensionContext;
 
     @Override
     public FREObject call(FREContext context, FREObject[] arg1) 
     {
+        extensionContext = (ExtensionContext) context;
+
         try
         {
-            ExtensionContext extensionContext = (ExtensionContext) context;
-
             extensionContext.getPlayer().stop();
             extensionContext.getPlayer().release();
             extensionContext.setMediaUrl(null);
@@ -23,11 +24,10 @@ public class CloseFunction implements FREFunction
         }
         catch (Exception e)
         {
-            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on close");
+            extensionContext.dispatchStatusEventAsync("LOGGING", "[Error] Error on close");
             e.printStackTrace();
         }
         
         return null;
     }
-
 }

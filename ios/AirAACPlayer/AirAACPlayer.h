@@ -17,19 +17,25 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 #import "FlashRuntimeExtensions.h"
+#import <AVFoundation/AVAudioPlayer.h>
+#import <AVFoundation/AVPlayerItem.h>
+#import <AVFoundation/AVAsset.h>
 
-@interface AirAACPlayer : NSObject
-
-+ (id)sharedInstance;
-
-+ (void)dispatchEvent:(NSString *)eventName withInfo:(NSString *)info;
-+ (void)log:(NSString *)message;
-
-@end
-
+FREObject loadUrl(FREContext context, void* functionData, uint32_t argc, FREObject argv[]);
+FREObject play(FREContext context, void* functionData, uint32_t argc, FREObject argv[]);
+FREObject pauseFunction(FREContext context, void* functionData, uint32_t argc, FREObject argv[]);
+FREObject stop(FREContext context, void* functionData, uint32_t argc, FREObject argv[]);
+FREObject closeFunction(FREContext context, void* functionData, uint32_t argc, FREObject argv[]);
+FREObject getLength(FREContext context, void* functionData, uint32_t argc, FREObject argv[]);
+FREObject getProgress(FREContext context, void* functionData, uint32_t argc, FREObject argv[]);
 
 // ANE Setup
 void AirAACPlayerContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet);
 void AirAACPlayerContextFinalizer(FREContext ctx);
 void AirAACPlayerInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet);
 void AirAACPlayerFinalizer(void *extData);
+
+NSMutableDictionary* soundPlayers;
+AVAudioPlayer* getPlayerFromContext(FREContext context);
+void setPlayer(NSString* url, AVAudioPlayer* player);
+AVAudioPlayer* getPlayer(NSString* url);

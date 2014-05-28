@@ -6,22 +6,25 @@ import com.adobe.fre.FREObject;
 import com.freshplanet.ane.AirAACPlayer.Extension;
 import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
-public class StopFunction implements FREFunction {
+public class StopFunction implements FREFunction 
+{
+    private ExtensionContext extensionContext;
 
     @Override
     public FREObject call(FREContext context, FREObject[] args) 
     {
+        extensionContext = (ExtensionContext) context;
+
         try
         {
-            ((ExtensionContext) context).getPlayer().stop();
+            extensionContext.getPlayer().stop();
         }
         catch (Exception e)
         {
-            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on stop");
+            extensionContext.dispatchStatusEventAsync("LOGGING", "[Error] Error on stop");
             e.printStackTrace();
         }
         
         return null;
     }
-
 }

@@ -8,21 +8,23 @@ import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
 public class PauseFunction implements FREFunction
 {
+    private ExtensionContext extensionContext;
 
     @Override
     public FREObject call(FREContext context, FREObject[] args) 
     {
+        extensionContext = (ExtensionContext) context;
+
         try
         {
-            ((ExtensionContext) context).getPlayer().pause();
+            extensionContext.getPlayer().pause();
         }
         catch (Exception e)
         {
-            Extension.context.dispatchStatusEventAsync("LOGGING", "[Error] Error on pause");
+            extensionContext.dispatchStatusEventAsync("LOGGING", "[Error] Error on pause");
             e.printStackTrace();
         }
         
         return null;
     }
-
 }
