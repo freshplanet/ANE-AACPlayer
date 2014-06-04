@@ -54,7 +54,22 @@ public class LoadUrlFunction implements FREFunction
                 };
                 extensionContext.getPlayer().setOnPreparedListener(listener);
 
-            } else {
+                MediaPlayer.OnErrorListener onErrorListener = new MediaPlayer.OnErrorListener()   
+                {  
+                    @Override  
+                    public boolean onError(MediaPlayer mp, int what, int extra)   
+                    {  
+                        extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Player error: " + what + " : " + extra);
+                        extensionContext.dispatchStatusEventAsync("AAC_PLAYER_ERROR", "ERROR");
+                        return true;  
+                    }  
+                }; 
+
+                extensionContext.getPlayer().setOnErrorListener(onErrorListener);
+
+            } 
+            else 
+            {
             	extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Player already prepared");
                 extensionContext.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
             }

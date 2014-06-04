@@ -33,6 +33,7 @@ package com.freshplanet.ane.AirAACPlayer
         // --------------------------------------------------------------------------------------//
         
         public static const AAC_PLAYER_PREPARED:String = "AAC_PLAYER_PREPARED";
+        public static const AAC_PLAYER_ERROR:String = "AAC_PLAYER_ERROR";
 
         /** AirAACPlayer is supported on Android devices. */
         public static function get isSupported():Boolean
@@ -132,6 +133,10 @@ package com.freshplanet.ane.AirAACPlayer
                 log(event.level);
             }
             else if (event.code == AAC_PLAYER_PREPARED)
+            {
+                dispatchEvent(new Event(event.code));
+            }
+            else if (event.code == AAC_PLAYER_ERROR)
             {
                 dispatchEvent(new Event(event.code));
             }
