@@ -33,6 +33,7 @@ public class ExtensionContext extends FREContext
 {
     private MediaPlayer _mediaPlayer;
     private String _mediaUrl;
+    private boolean _isLoaded;
     
     @Override
     public void dispose() {}
@@ -61,6 +62,16 @@ public class ExtensionContext extends FREContext
     public String getMediaUrl() 
     {
     	return _mediaUrl;
+    }
+
+    public boolean isLoaded()
+    {
+        return _isLoaded;
+    }
+
+    public void setIsLoaded(boolean isLoaded)
+    {
+        _isLoaded = isLoaded;
     }
     
     public ViewGroup getRootContainer()
