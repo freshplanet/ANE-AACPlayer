@@ -31,9 +31,14 @@ import com.freshplanet.ane.AirAACPlayer.functions.*;
 
 public class ExtensionContext extends FREContext
 {
+    public static final String LOADING = "LOADING";
+    public static final String PREPARED = "PREPARED";
+    public static final String ERROR = "ERROR";
+
     private MediaPlayer _mediaPlayer;
     private String _mediaUrl;
-    private boolean _isLoaded;
+
+    private String _state;
     
     @Override
     public void dispose() {}
@@ -53,25 +58,15 @@ public class ExtensionContext extends FREContext
         
         return functions;
     }
-    
-    public void setMediaUrl( String url ) 
+
+    public String getState()
     {
-    	_mediaUrl = url;
-    }
-    
-    public String getMediaUrl() 
-    {
-    	return _mediaUrl;
+        return _state;
     }
 
-    public boolean isLoaded()
+    public void setState(String state)
     {
-        return _isLoaded;
-    }
-
-    public void setIsLoaded(boolean isLoaded)
-    {
-        _isLoaded = isLoaded;
+        _state = state;
     }
     
     public ViewGroup getRootContainer()
