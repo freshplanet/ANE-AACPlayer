@@ -19,7 +19,6 @@ public class CloseFunction implements FREFunction
         {
             extensionContext.getPlayer().stop();
             extensionContext.getPlayer().release();
-            extensionContext.setMediaUrl(null);
             extensionContext.setPlayer(null);
         }
         catch (Exception e)
