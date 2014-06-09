@@ -22,32 +22,38 @@ public class LoadUrlFunction implements FREFunction
         try
         {
             String url = args[0].getAsString();
-            extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Loading url " + url + " - existing url: " + extensionContext.getMediaUrl() + " - isLoaded: " + extensionContext.isLoaded());
+            extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Loading url " + url + " - STATE: " + extensionContext.getState());
 
-            if( !extensionContext.isLoaded() ) 
+            if ( extensionContext.getState() == ExtensionContext.LOADING )
             {
-                if ( url.equals(extensionContext.getMediaUrl()) )
+                return null;
+            }
+            else if( extensionContext.getState() == ExtensionContext.PREPARED ) 
+            {
+                extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Player already prepared");
+                extensionContext.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
+            }
+            else
+            {
+                if ( extensionContext.getState() == ExtensionContext.ERROR )
                 {
-
-                    // This is a tough one - don't want to reload unless loading error
-
+                    // This should never be called
                     extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] LOADING AGAIN!!");
                     extensionContext.getPlayer().release();
-                    extensionContext.setMediaUrl(null);
                     extensionContext.setPlayer(null);
                 }
 
-            	extensionContext.setMediaUrl(url);
             	extensionContext.getPlayer().reset();
             	extensionContext.getPlayer().setDataSource(url);
             	extensionContext.getPlayer().prepareAsync();
+                extensionContext.setState(ExtensionContext.LOADING);
 
             	OnPreparedListener listener = new OnPreparedListener() 
                 {
                     @Override
                     public void onPrepared(MediaPlayer mp) 
                     {
-                        extensionContext.setIsLoaded(true);
+                        extensionContext.setState(ExtensionContext.PREPARED);
                         extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Player prepared");
                         extensionContext.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
                     }
@@ -59,20 +65,14 @@ public class LoadUrlFunction implements FREFunction
                     @Override  
                     public boolean onError(MediaPlayer mp, int what, int extra)   
                     {  
+                        extensionContext.setState(ExtensionContext.ERROR);
                         extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Player error: " + what + " : " + extra);
                         extensionContext.dispatchStatusEventAsync("AAC_PLAYER_ERROR", "ERROR");
                         return true;  
                     }  
                 }; 
-
                 extensionContext.getPlayer().setOnErrorListener(onErrorListener);
-
             } 
-            else 
-            {
-            	extensionContext.dispatchStatusEventAsync("LOGGING", "[Info] Player already prepared");
-                extensionContext.dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
-            }
 
         }
         catch (Exception e)
