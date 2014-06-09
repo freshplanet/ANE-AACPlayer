@@ -34,6 +34,11 @@ void setPlayer(NSString* url, AVAudioPlayer* player)
     [soundPlayers setObject:player forKey:url];
 }
 
+void removePlayer(NSString* url)
+{
+    [soundPlayers removeObjectForKey:url];
+}
+
 AVAudioPlayer* getPlayerFromContext(FREContext context)
 {
     NSString *url;
@@ -43,6 +48,18 @@ AVAudioPlayer* getPlayerFromContext(FREContext context)
     
     FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"Sound player is NULL");
     return NULL;
+}
+
+void removePlayerFromContext(FREContext context)
+{
+    FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"remove player from context");
+    NSString *url;
+    FREGetContextNativeData(context, (void**)&url);
+    if(url)
+    {
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"remove player");
+        removePlayer(url);
+    }
 }
 
 DEFINE_ANE_FUNCTION(loadUrl)
@@ -58,10 +75,23 @@ DEFINE_ANE_FUNCTION(loadUrl)
     dispatch_queue_t thread = dispatch_queue_create("sound loading", NULL);
     dispatch_async(thread,
     ^{
+        NSError *error;
         NSURL *myUrl = [NSURL URLWithString:url];
-        NSData *myData = [NSData dataWithContentsOfURL:myUrl];
-        NSError *err;
-        AVAudioPlayer *soundPlayer = [[AVAudioPlayer alloc] initWithData:myData error:&err];
+        NSData *myData = [NSData dataWithContentsOfURL:myUrl options:NSDataReadingUncached error:&error];
+        if(error)
+        {
+            FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"Data error");
+            FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"ERROR");
+            return;
+        }
+        
+        AVAudioPlayer *soundPlayer = [[AVAudioPlayer alloc] initWithData:myData error:&error];
+        if(error)
+        {
+            FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"Player error");
+            FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"ERROR");
+            return;
+        }
         
         FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"Set soundPlayer");
         setPlayer(url, soundPlayer);
@@ -103,7 +133,8 @@ DEFINE_ANE_FUNCTION(stop)
 DEFINE_ANE_FUNCTION(closeFunction)
 {
     AVAudioPlayer* soundPlayer = getPlayerFromContext(context);
-    [soundPlayer stop];
+    removePlayerFromContext(context);
+    [soundPlayer release];
     return NULL;
 }
 

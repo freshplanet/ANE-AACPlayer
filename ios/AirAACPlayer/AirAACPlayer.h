@@ -37,5 +37,7 @@ void AirAACPlayerFinalizer(void *extData);
 
 NSMutableDictionary* soundPlayers;
 AVAudioPlayer* getPlayerFromContext(FREContext context);
+void removePlayerFromContext(FREContext context);
 void setPlayer(NSString* url, AVAudioPlayer* player);
 AVAudioPlayer* getPlayer(NSString* url);
+void removePlayer(NSString* url);
