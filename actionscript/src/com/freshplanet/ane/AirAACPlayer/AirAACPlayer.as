@@ -133,12 +133,12 @@ package com.freshplanet.ane.AirAACPlayer
                 log(event.level);
             }
             else if (event.code == AAC_PLAYER_PREPARED)
-            {
+            { 
                 dispatchEvent(new Event(event.code));
             }
             else if (event.code == AAC_PLAYER_ERROR)
             {
-                dispatchEvent(new Event(event.code));
+                dispatchEvent(new StatusEvent(event.code, false, false, event.level));
             }
         }
         
