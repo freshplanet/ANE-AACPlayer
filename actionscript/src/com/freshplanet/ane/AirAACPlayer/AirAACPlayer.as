@@ -18,6 +18,7 @@
 
 package com.freshplanet.ane.AirAACPlayer
 {
+    import flash.events.ErrorEvent;
     import flash.events.Event;
     import flash.events.EventDispatcher;
     import flash.events.StatusEvent;
@@ -138,7 +139,7 @@ package com.freshplanet.ane.AirAACPlayer
             }
             else if (event.code == AAC_PLAYER_ERROR)
             {
-                dispatchEvent(new Event(event.code));
+                dispatchEvent(new ErrorEvent(event.code, false, false, event.level));
             }
         }
         

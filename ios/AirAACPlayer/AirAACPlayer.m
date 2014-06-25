@@ -78,18 +78,18 @@ DEFINE_ANE_FUNCTION(loadUrl)
         NSError *error;
         NSURL *myUrl = [NSURL URLWithString:url];
         NSData *myData = [NSData dataWithContentsOfURL:myUrl options:NSDataReadingUncached error:&error];
-        if(error)
+        if(error || !myData)
         {
             FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"Data error");
-            FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"ERROR");
+            FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"Error loading sound data");
             return;
         }
         
         AVAudioPlayer *soundPlayer = [[AVAudioPlayer alloc] initWithData:myData error:&error];
-        if(error)
+        if(error || !soundPlayer)
         {
             FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"Player error");
-            FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"ERROR");
+            FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"Error creating sound player");
             return;
         }
         
@@ -108,9 +108,13 @@ DEFINE_ANE_FUNCTION(play)
     FREGetObjectAsDouble(argv[0], &startTime);
     AVAudioPlayer* soundPlayer = getPlayerFromContext(context);
     
+    if(!soundPlayer)
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"Sound player is null in play()");
+    
     if(startTime > 0)
         [soundPlayer setCurrentTime:startTime];
     
+    FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"called play()");
     [soundPlayer play];
     return NULL;
 }
@@ -118,6 +122,9 @@ DEFINE_ANE_FUNCTION(play)
 DEFINE_ANE_FUNCTION(pauseFunction)
 {
     AVAudioPlayer* soundPlayer = getPlayerFromContext(context);
+    if(!soundPlayer)
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"Sound player is null in pause()");
+    
     [soundPlayer pause];
     return NULL;
 }
@@ -125,6 +132,9 @@ DEFINE_ANE_FUNCTION(pauseFunction)
 DEFINE_ANE_FUNCTION(stop)
 {
     AVAudioPlayer* soundPlayer = getPlayerFromContext(context);
+    if(!soundPlayer)
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"Sound player is null in stop()");
+    
     [soundPlayer stop];
     [soundPlayer setCurrentTime:0];
     return NULL;
@@ -133,6 +143,8 @@ DEFINE_ANE_FUNCTION(stop)
 DEFINE_ANE_FUNCTION(closeFunction)
 {
     AVAudioPlayer* soundPlayer = getPlayerFromContext(context);
+    if(!soundPlayer)
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"Sound player is null in close()");
     removePlayerFromContext(context);
     [soundPlayer release];
     return NULL;
@@ -141,6 +153,8 @@ DEFINE_ANE_FUNCTION(closeFunction)
 DEFINE_ANE_FUNCTION(getLength)
 {
     AVAudioPlayer* soundPlayer = getPlayerFromContext(context);
+    if(!soundPlayer)
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"Sound player is null in getLength()");
     
     double len = 0.0;
     if(soundPlayer)
@@ -156,6 +170,8 @@ DEFINE_ANE_FUNCTION(getLength)
 DEFINE_ANE_FUNCTION(getProgress)
 {
     AVAudioPlayer* soundPlayer = getPlayerFromContext(context);
+    if(!soundPlayer)
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"Sound player is null in getProgress()");
     
     double progress;
     if(soundPlayer)
