@@ -114,7 +114,6 @@ DEFINE_ANE_FUNCTION(play)
     if(startTime > 0)
         [soundPlayer setCurrentTime:startTime];
     
-    FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"called play()");
     [soundPlayer play];
     return NULL;
 }
