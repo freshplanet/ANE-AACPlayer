@@ -45,6 +45,8 @@ AVAudioPlayer* getPlayerFromContext(FREContext context)
     FREGetContextNativeData(context, (void**)&url);
     if(url)
         return getPlayer(url);
+    else
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"URL is null in getPlayerFromContext()");
     
     FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"Sound player is NULL");
     return NULL;
@@ -60,16 +62,27 @@ void removePlayerFromContext(FREContext context)
         FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"remove player");
         removePlayer(url);
     }
+    else
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"URL is null in removePlayerFromContext()");
 }
 
 DEFINE_ANE_FUNCTION(loadUrl)
 {
     uint32_t string_length;
-    const uint8_t *utf8_message;
+    const uint8_t *utf8_message = NULL;
     NSString* url = NULL;
     if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) == FRE_OK)
         url = [NSString stringWithUTF8String:(char*) utf8_message];
+    else
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"Error in FREGetObjectAsUTF8() getting URL");
 
+    if(!url)
+    {
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"URL is null in loadUrl() - utf8* url follows");
+        FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", utf8_message);
+        return NULL;
+    }
+    
     FRESetContextNativeData(context, url);
     
     dispatch_queue_t thread = dispatch_queue_create("sound loading", NULL);
@@ -94,7 +107,11 @@ DEFINE_ANE_FUNCTION(loadUrl)
         }
         
         FREDispatchStatusEventAsync(context, (const uint8_t*)"LOGGING", (const uint8_t*)"Set soundPlayer");
-        setPlayer(url, soundPlayer);
+        
+        if(url)
+            setPlayer(url, soundPlayer);
+        else
+            FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"URL is null before calling setPlayer");
         
         FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_PREPARED", (const uint8_t*)"prepared");
     });
