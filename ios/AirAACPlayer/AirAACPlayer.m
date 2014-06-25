@@ -72,7 +72,7 @@ DEFINE_ANE_FUNCTION(loadUrl)
     const uint8_t *utf8_message = NULL;
     NSString* url = NULL;
     if (FREGetObjectAsUTF8(argv[0], &string_length, &utf8_message) == FRE_OK)
-        url = [NSString stringWithUTF8String:(char*) utf8_message];
+        url = [[NSString alloc] initWithUTF8String:(char*) utf8_message];
     else
         FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"Error in FREGetObjectAsUTF8() getting URL");
 
@@ -114,6 +114,8 @@ DEFINE_ANE_FUNCTION(loadUrl)
             FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_ERROR", (const uint8_t*)"URL is null before calling setPlayer");
         
         FREDispatchStatusEventAsync(context, (const uint8_t*)"AAC_PLAYER_PREPARED", (const uint8_t*)"prepared");
+        
+        [url release];
     });
 
     return NULL;
