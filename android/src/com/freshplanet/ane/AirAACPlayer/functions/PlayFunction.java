@@ -1,37 +1,16 @@
 package com.freshplanet.ane.AirAACPlayer.functions;
 
 import com.adobe.fre.FREContext;
-import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
-import com.freshplanet.ane.AirAACPlayer.Extension;
 import com.freshplanet.ane.AirAACPlayer.ExtensionContext;
 
-public class PlayFunction implements FREFunction 
+public class PlayFunction extends BaseFunction 
 {
-    private ExtensionContext extensionContext;
-
-    @Override
+	@Override
     public FREObject call(FREContext context, FREObject[] args) 
     {
-        extensionContext = (ExtensionContext) context;
-
-        try
-        {
-            if (args.length != 0)
-            {
-                // start from given time (in milliseconds)
-                int position = args[0].getAsInt();
-                extensionContext.getPlayer().seekTo(position);
-            }
-
-            extensionContext.getPlayer().start();
-        }
-        catch (Exception e)
-        {
-            extensionContext.dispatchStatusEventAsync("LOGGING", "[Error] Error on play");
-            e.printStackTrace();
-        }
-        
+    	int position = getIntFromFREObject(args[0]);
+    	((ExtensionContext)context).play(position);
         return null;
     }
 }

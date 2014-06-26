@@ -27,125 +27,158 @@ package com.freshplanet.ane.AirAACPlayer
 
     public class AirAACPlayer extends EventDispatcher
     {
-        // --------------------------------------------------------------------------------------//
-        //                                                                                       //
-        //                                     PUBLIC API                                        //
-        //                                                                                       //
-        // --------------------------------------------------------------------------------------//
+		////////////////////////////////////////////////////////////////////////////////
+		// Constants
+		
+		public static const STATE_INIT:String = "init";
+		public static const STATE_LOADING:String = "loading";
+		public static const STATE_READY:String = "ready";
+		public static const STATE_ERROR:String = "error";
+		public static const STATE_DISPOSED:String = "disposed";
         
         public static const AAC_PLAYER_PREPARED:String = "AAC_PLAYER_PREPARED";
         public static const AAC_PLAYER_ERROR:String = "AAC_PLAYER_ERROR";
+		
+		private static const EXTENSION_ID:String = "com.freshplanet.AirAACPlayer";
+		
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// States
+		
+		public var logEnabled:Boolean = true;
+		
+		private var _context:ExtensionContext;
+		private var _state:String = STATE_INIT;
+		private var _url:String;
+		
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// Lifecycle
+		
+		public function AirAACPlayer(url:String)
+		{
+			if (!isSupported) return;
+			
+			_context = ExtensionContext.createExtensionContext(EXTENSION_ID, null);
+			if (!_context)
+			{
+				log("ERROR - Extension context is null. Please check if extension.xml is setup correctly.");
+				return;
+			}
+			_context.addEventListener(StatusEvent.STATUS, onStatus);
+			_url = url;
+		}
+		
+		public function dispose():void
+		{
+			if (!isSupported || state == STATE_DISPOSED) return;
+			
+			_state = STATE_DISPOSED;
+			_context.dispose();
+			_context = null;
+		}
+		
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// Getters
+		
+		/** AirAACPlayer is supported on iOS and Android devices. */
+		public static function get isSupported():Boolean
+		{
+			var iOS:Boolean = (Capabilities.manufacturer.indexOf("iOS") != -1);
+			var isAndroid:Boolean = (Capabilities.manufacturer.indexOf("Android") != -1);
+			return iOS || isAndroid;
+		}
+		
+		public function get state():String
+		{
+			return _state;
+		}
+		
+		public function get url():String
+		{
+			return _url;
+		}
+		
+		/** Duration in milliseconds */
+		public function get duration():int
+		{
+			if (!isSupported || state != STATE_READY) return -1;
+			return _context.call("AirAACPlayer_getDuration") as int;
+		}
+		
+		/** Progress in milliseconds */
+		public function get progress():int
+		{
+			if (!isSupported || state != STATE_READY) return -1;
+			return _context.call("AirAACPlayer_getProgress") as int;
+		}
+		
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// Imperatives
+		
+		public function load():void
+		{
+			if (!isSupported || state != STATE_INIT) return;
+			_state = STATE_LOADING;
+			_context.call("AirAACPlayer_load", _url);
+		}
+		
+		/**
+		 * Start playing the stream.
+		 * If the playback has been paused before, it will continue from this point.
+		 * 
+		 * @param startTime:int the start time in milliseconds
+		 */
+		public function play(startTime:int = 0):void
+		{
+			if (!isSupported || state != STATE_READY) return;
+			startTime = Math.max(0, Math.min(duration, startTime));
+			_context.call("AirAACPlayer_play", startTime);
+		}
+		
+		/** Pause the playback */
+		public function pause():void
+		{
+			if (!isSupported || state != STATE_READY) return;
+			_context.call("AirAACPlayer_pause");
+		}
+		
+		/** Stop the playback and move the play head to the beginning of the file */
+		public function stop():void
+		{
+			if (!isSupported || state != STATE_READY) return;
+			_context.call("AirAACPlayer_stop");
+		}
+		
+		private function log(message:String):void
+		{
+			if (logEnabled) trace("[AirAACPlayer] " + message);
+		}
+		
+		
+		////////////////////////////////////////////////////////////////////////////////
+		// Event listeners
 
-        /** AirAACPlayer is supported on Android devices. */
-        public static function get isSupported():Boolean
+        private function onStatus(event:StatusEvent):void
         {
-            var isAndroid:Boolean = (Capabilities.manufacturer.indexOf("Android") != -1)
-            return isAndroid;
-        }
-        
-        public function AirAACPlayer()
-        {
-            _context = ExtensionContext.createExtensionContext(EXTENSION_ID, null);
-            if (!_context)
-            {
-                log("ERROR - Extension context is null. Please check if extension.xml is setup correctly.");
-                return;
-            }
-            _context.addEventListener(StatusEvent.STATUS, onStatus);
-        }
-        
-        public var logEnabled:Boolean = true;
-
-        /**
-        * Load a music stream url
-        * @param url:String
-        */
-        public function loadUrl(url:String):void
-        {
-            _context.call("loadUrl", url);
-        }
-        
-        /**
-        * Start playing the stream.
-        * If the playback has been paused before, it will continue from this point.
-        * @param startTime:int the start time in milliseconds
-        */
-        public function play(startTime:int=0):void
-        {
-            _context.call("play", startTime);
-        }
-        
-        /**
-        * Pause the playback
-        */
-        public function pause():void
-        {
-            _context.call("pause");
-        }
-
-        /**
-        * Stop the playback
-        */
-        public function stop():void
-        {
-            _context.call("stop");
-        }
-        
-        /**
-        * Close the stream and release.
-        * Note that loadUrl() has to be called again before replaying if close has been called.
-        */
-        public function close():void
-        {
-            _context.call("close");
-        }
-        
-        /** 
-        * Length in milliseconds 
-        */
-        public function get length():int
-        {
-            return _context.call("getLength") as int;
-        }
-        
-        /** 
-        * Progress in milliseconds
-        */
-        public function get progress():int
-        {
-            return _context.call("getProgress") as int;
-        }
-        
-
-        
-        // --------------------------------------------------------------------------------------//
-        //                                                                                       //
-        //                                      PRIVATE API                                      //
-        //                                                                                       //
-        // --------------------------------------------------------------------------------------//
-        
-        private static const EXTENSION_ID:String = "com.freshplanet.AirAACPlayer"; 
-        private var _context:ExtensionContext;
-        
-        private function onStatus( event:StatusEvent ):void
-        {
+			if (state == STATE_DISPOSED) return;
+			
             if (event.code == "LOGGING") // Simple log message
             {
                 log(event.level);
             }
             else if (event.code == AAC_PLAYER_PREPARED)
             { 
+				_state = STATE_READY;
                 dispatchEvent(new Event(event.code));
             }
             else if (event.code == AAC_PLAYER_ERROR)
             {
-                dispatchEvent(new StatusEvent(event.code, false, false, event.level));
+				_state = STATE_ERROR;
+                dispatchEvent(new ErrorEvent(event.code, false, false, event.level));
             }
-        }
-        
-        private function log( message:String ):void
-        {
-            if (logEnabled) trace("[AirAACPlayer] " + message);
         }
     }
 }
