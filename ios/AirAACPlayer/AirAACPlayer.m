@@ -17,112 +17,58 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 #import "AirAACPlayer.h"
-#import <AVFoundation/AVFoundation.h>
+#import "AirAACPlayerManager.h"
 #import "FPANEUtils.h"
 
-static dispatch_queue_t soundLoadingQueue;
-
-AVAudioPlayer *getAudioPlayerFromContext(FREContext context)
+AirAACPlayerManager *getPlayerManagerFromContext(FREContext context)
 {
-    CFTypeRef audioPlayerRef;
-    FREGetContextNativeData(context, (void *)&audioPlayerRef);
-    return (__bridge AVAudioPlayer *)audioPlayerRef;
+    CFTypeRef playerManagerRef;
+    FREGetContextNativeData(context, (void *)&playerManagerRef);
+    return (__bridge AirAACPlayerManager *)playerManagerRef;
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_load)
 {
     NSURL *url = [NSURL URLWithString:FPANE_FREObjectToNSString(argv[0])];
-    
-    /* Retain audio player and attach it to FREContext.
-       We do this before initializing the player because
-       we can only call FRESetContextNativeData in the main
-       thread, and we'll only be able to initialize the
-       player after downloading the data, in a background
-       thread.
-     */
-    __block AVAudioPlayer *audioPlayer = [AVAudioPlayer alloc];
-    CFTypeRef audioPlayerRef = CFBridgingRetain(audioPlayer);
-    FRESetContextNativeData(context, (void *)audioPlayerRef);
-    
-    /* Contrary to what FREDispatchStatusEventAsync's
-       documentation says, the event is dispatched if
-       the given context has already been disposed.
-       The problem is that it is dispatched to other
-       instances...
-       To alleviate this issue, we compare the player's
-       current and initial retain count before dispatching
-       an event. If the retain count has decreased, it
-       means we released it when disposing the context
-       so events shouldn't be dispatched.
-     */
-    CFIndex initialRetainCount = CFGetRetainCount(audioPlayerRef);
-    
-    dispatch_async(soundLoadingQueue, ^{
-        
-        NSError *error;
-        NSData *soundData = [NSData dataWithContentsOfURL:url options:NSDataReadingUncached error:&error];
-        if (!soundData)
-        {
-            if (CFGetRetainCount(audioPlayerRef) >= initialRetainCount)
-            {
-                FPANE_DispatchEventWithInfo(context, @"AAC_PLAYER_ERROR", [error description]);
-            }
-            return;
-        }
-        
-        audioPlayer = [audioPlayer initWithData:soundData error:&error];
-        if(!audioPlayer)
-        {
-            if (CFGetRetainCount(audioPlayerRef) >= initialRetainCount)
-            {
-                FPANE_DispatchEventWithInfo(context, @"AAC_PLAYER_ERROR", [error description]);
-            }
-            return;
-        }
-        
-        if (CFGetRetainCount(audioPlayerRef) >= initialRetainCount)
-        {
-            FPANE_DispatchEventWithInfo(context, @"AAC_PLAYER_PREPARED", @"OK");
-        }
-    });
-
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    [playerManager loadURL:url];
     return NULL;
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_play)
 {
     double startTime = FPANE_FREObjectToDouble(argv[0]);
-    AVAudioPlayer *audioPlayer = getAudioPlayerFromContext(context);
-    if (startTime > 0) audioPlayer.currentTime = startTime;
-    [audioPlayer play];
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    if (startTime > 0) playerManager.player.currentTime = startTime;
+    [playerManager.player play];
     return NULL;
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_pause)
 {
-    AVAudioPlayer *audioPlayer = getAudioPlayerFromContext(context);
-    [audioPlayer pause];
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    [playerManager.player pause];
     return NULL;
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_stop)
 {
-    AVAudioPlayer *audioPlayer = getAudioPlayerFromContext(context);
-    [audioPlayer stop];
-    audioPlayer.currentTime = 0;
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    [playerManager.player stop];
+    playerManager.player.currentTime = 0;
     return NULL;
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_getDuration)
 {
-    AVAudioPlayer *audioPlayer = getAudioPlayerFromContext(context);
-    return FPANE_IntToFREObject(1000*audioPlayer.duration);
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    return FPANE_IntToFREObject(1000*playerManager.player.duration);
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_getProgress)
 {
-    AVAudioPlayer *audioPlayer = getAudioPlayerFromContext(context);
-    double progress = audioPlayer.isPlaying ? audioPlayer.currentTime : audioPlayer.duration;
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    double progress = playerManager.player.isPlaying ? playerManager.player.currentTime : playerManager.player.duration;
     return FPANE_IntToFREObject(1000*progress);
 }
 
@@ -139,13 +85,16 @@ void AirAACPlayerContextInitializer(void* extData, const uint8_t* ctxType, FRECo
     };
     *numFunctionsToTest = sizeof(functions) / sizeof(FRENamedFunction);
     *functionsToSet = functions;
+    
+    AirAACPlayerManager *playerManager = [[AirAACPlayerManager alloc] initWithContext:ctx];
+    FRESetContextNativeData(ctx, (void *)CFBridgingRetain(playerManager));
 }
 
 void AirAACPlayerContextFinalizer(FREContext ctx)
 {
-    CFTypeRef audioPlayerRef;
-    FREGetContextNativeData(ctx, (void **)&audioPlayerRef);
-    CFBridgingRelease(audioPlayerRef);
+    CFTypeRef playerManagerRef;
+    FREGetContextNativeData(ctx, (void **)&playerManagerRef);
+    CFBridgingRelease(playerManagerRef);
 }
 
 void AirAACPlayerInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet)
@@ -153,8 +102,6 @@ void AirAACPlayerInitializer(void** extDataToSet, FREContextInitializer* ctxInit
 	*extDataToSet = NULL;
 	*ctxInitializerToSet = &AirAACPlayerContextInitializer;
 	*ctxFinalizerToSet = &AirAACPlayerContextFinalizer;
-    
-    soundLoadingQueue = dispatch_queue_create("soundLoadingQueue", NULL);
 }
 
 void AirAACPlayerFinalizer(void *extData) {}

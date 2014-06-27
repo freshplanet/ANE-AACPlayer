@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		39044772195C6EA4009CBA90 /* FPANEUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 39044770195C6EA4009CBA90 /* FPANEUtils.h */; };
 		39044773195C6EA4009CBA90 /* FPANEUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 39044771195C6EA4009CBA90 /* FPANEUtils.m */; };
+		3904477E195DBC50009CBA90 /* AirAACPlayerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3904477C195DBC50009CBA90 /* AirAACPlayerManager.h */; };
+		3904477F195DBC50009CBA90 /* AirAACPlayerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3904477D195DBC50009CBA90 /* AirAACPlayerManager.m */; };
 		40F05706192A612300D64EA1 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40F05705192A612300D64EA1 /* AVFoundation.framework */; };
 		40F05708192A707800D64EA1 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40F05707192A707800D64EA1 /* CoreMedia.framework */; };
 		5A98569C15213BC3003A8EB0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A98569B15213BC3003A8EB0 /* Foundation.framework */; };
@@ -22,6 +24,8 @@
 /* Begin PBXFileReference section */
 		39044770195C6EA4009CBA90 /* FPANEUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPANEUtils.h; sourceTree = "<group>"; };
 		39044771195C6EA4009CBA90 /* FPANEUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPANEUtils.m; sourceTree = "<group>"; };
+		3904477C195DBC50009CBA90 /* AirAACPlayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirAACPlayerManager.h; sourceTree = "<group>"; };
+		3904477D195DBC50009CBA90 /* AirAACPlayerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirAACPlayerManager.m; sourceTree = "<group>"; };
 		40F05705192A612300D64EA1 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		40F05707192A707800D64EA1 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		5A98569815213BC3003A8EB0 /* libAirAACPlayer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAirAACPlayer.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,6 +85,8 @@
 			children = (
 				FA8DA7FC16A46CB200CE1D10 /* AirAACPlayer.h */,
 				FA8DA7FD16A46CB200CE1D10 /* AirAACPlayer.m */,
+				3904477C195DBC50009CBA90 /* AirAACPlayerManager.h */,
+				3904477D195DBC50009CBA90 /* AirAACPlayerManager.m */,
 				FA8DA80516A46CFF00CE1D10 /* Supporting Files */,
 			);
 			path = AirAACPlayer;
@@ -105,6 +111,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA8DA7FE16A46CB200CE1D10 /* AirAACPlayer-Prefix.pch in Headers */,
+				3904477E195DBC50009CBA90 /* AirAACPlayerManager.h in Headers */,
 				39044772195C6EA4009CBA90 /* FPANEUtils.h in Headers */,
 				FA8DA7FF16A46CB200CE1D10 /* AirAACPlayer.h in Headers */,
 				FA8DA80716A46D4500CE1D10 /* FlashRuntimeExtensions.h in Headers */,
@@ -162,6 +169,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				39044773195C6EA4009CBA90 /* FPANEUtils.m in Sources */,
+				3904477F195DBC50009CBA90 /* AirAACPlayerManager.m in Sources */,
 				FA8DA80016A46CB200CE1D10 /* AirAACPlayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
