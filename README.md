@@ -1,11 +1,14 @@
-Air Native Extension for AAC Streaming (Android)
-================================================
+Air Native Extension for AAC playback (iOS + Android)
+=====================================================
 
 This is an [Air native extensions](http://www.adobe.com/devnet/air/native-extensions-for-air.html) 
-to interact with the native [MediaPlayer](http://developer.android.com/reference/android/media/MediaPlayer.html) 
-on Android. It has been developed by [FreshPlanet](http://freshplanet.com) and is used in the game [SongPop](http://songpop.fm).
+to interact with the native audio players:
 
-The goal of this extension is to have better support for M4a (AAC) streaming on Android.
+* [AVAudioPlayer](https://developer.apple.com/library/ios/documentation/AVFoundation/Reference/AVAudioPlayerClassReference/Chapters/Reference.html) on iOS
+* [MediaPlayer](http://developer.android.com/reference/android/media/MediaPlayer.html) on Android
+
+It has been developed by [FreshPlanet](http://freshplanet.com) and is used in the game [SongPop](http://songpop.fm).
+
 
 Installation
 ------------
@@ -17,35 +20,13 @@ You should add it to your application project's Build Path and make sure to pack
 Usage
 -----
 
-In order to play a stream, you have to call the loadUrl() function, add an event listener to the instance to
-know when the player is ready, and then call the play() function.
+A sample application is provided in the `sample` folder to help you get familiar with this ANE.
 
-    
-```actionscript
-// Load an url and listen to the AirAACPlayer.AAC_PLAYER_PREPARED event
-AirAACPlayer.getInstance().addEventListener(AirAACPlayer.AAC_PLAYER_PREPARED, onPlayerPrepared);
-AirAACPlayer.getInstance().loadUrl("http://www.example.com/url-to-your-file.mp4");
+In order to run the sample application, you need to create a JSON file to provide some m4a URLs:
 
-// Once the player is ready, you can start playing
-var onPlayerPrepared:Function = function(event:Event):void {
-    AirAACPlayer.getInstance().play();
-};
-
-// Pause the playback
-AirAACPlayer.getInstance().pause();
-
-// Start from a specific position (in milliseconds)
-AirAACPlayer.getInstance().play(4200);
-
-// You have access to the current position and total length (in milliseconds)
-AirAACPlayer.getInstance().progress;
-AirAACPlayer.getInstance().length;
-
-// Stop it
-AirAACPlayer.getInstance().stop();
-
-// Don't forget to close when you don't need it anymore
-AirAACPlayer.getInstance().close();
+```bash
+cd /path/to/the/ane/sample/src
+echo '["http://domain.com/file1.m4a", "http://domain.com/file2.m4a"]' > m4a_urls.json
 ```
 
 
@@ -55,15 +36,18 @@ Build script
 Should you need to edit the extension source code and/or recompile it, you will find an ant build script 
 (build.xml) in the *build* folder:
 
-    cd /path/to/the/ane/build
-    mv example.build.config build.config
-    #edit the build.config file to provide your machine-specific paths
-    ant
+```bash
+cd /path/to/the/ane/build
+mv example.build.config build.config
+#edit the build.config file to provide your machine-specific paths
+ant
+```
 
 
 Authors
 -------
 
-This ANE has been written by [Corentin Smith](http://csmith.fr). 
+This ANE has been written by [Corentin Smith](http://csmith.fr), [Kevin Lockard](https://github.com/kevinfreshplanet),
+[Jay Canty](https://github.com/jaycanty) and [Alexis Taugeron](http://alexistaugeron.com). 
 It belongs to [FreshPlanet Inc.](http://freshplanet.com) and is distributed under the 
 [Apache Licence, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
