@@ -29,6 +29,8 @@ cd /path/to/the/ane/sample/src
 echo '["http://domain.com/file1.m4a", "http://domain.com/file2.m4a"]' > m4a_urls.json
 ```
 
+Notes:
+* included binary has been compiled for 64-bit iOS support
 
 Build script
 ------------
