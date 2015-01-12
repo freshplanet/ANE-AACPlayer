@@ -18,17 +18,6 @@
 
 #import "FlashRuntimeExtensions.h"
 
-@interface AirAACPlayer : NSObject
-
-+ (id)sharedInstance;
-
-+ (void)dispatchEvent:(NSString *)eventName withInfo:(NSString *)info;
-+ (void)log:(NSString *)message;
-
-@end
-
-
-// ANE Setup
 void AirAACPlayerContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet);
 void AirAACPlayerContextFinalizer(FREContext ctx);
 void AirAACPlayerInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet);

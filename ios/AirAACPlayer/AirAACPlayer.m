@@ -17,70 +17,85 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 #import "AirAACPlayer.h"
+#import "AirAACPlayerManager.h"
+#import "FPANEUtils.h"
 
-FREContext AirAACPlayerCtx = nil;
-
-@implementation AirAACPlayer
-
-#pragma mark - Singleton
-
-static AirAACPlayer *sharedInstance = nil;
-
-+ (AirAACPlayer *)sharedInstance
+AirAACPlayerManager *getPlayerManagerFromContext(FREContext context)
 {
-    if (sharedInstance == nil)
-    {
-        sharedInstance = [[super allocWithZone:NULL] init];
-    }
-    
-    return sharedInstance;
+    CFTypeRef playerManagerRef;
+    FREGetContextNativeData(context, (void *)&playerManagerRef);
+    return (__bridge AirAACPlayerManager *)playerManagerRef;
 }
 
-+ (id)allocWithZone:(NSZone *)zone
+DEFINE_ANE_FUNCTION(AirAACPlayer_load)
 {
-    return [self sharedInstance];
+    NSURL *url = [NSURL URLWithString:FPANE_FREObjectToNSString(argv[0])];
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    [playerManager loadURL:url];
+    return NULL;
 }
 
-- (id)copy
+DEFINE_ANE_FUNCTION(AirAACPlayer_play)
 {
-    return self;
+    double startTime = FPANE_FREObjectToDouble(argv[0]);
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    if (startTime > 0) playerManager.player.currentTime = startTime;
+    [playerManager.player play];
+    return NULL;
 }
 
-#pragma mark - AirAACPlayer
-
-+ (void)dispatchEvent:(NSString *)eventName withInfo:(NSString *)info
+DEFINE_ANE_FUNCTION(AirAACPlayer_pause)
 {
-    if (AirAACPlayerCtx != nil)
-    {
-        FREDispatchStatusEventAsync(AirAACPlayerCtx, (const uint8_t *)[eventName UTF8String], (const uint8_t *)[info UTF8String]);
-    }
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    [playerManager.player pause];
+    return NULL;
 }
 
-+ (void)log:(NSString *)message
+DEFINE_ANE_FUNCTION(AirAACPlayer_stop)
 {
-    [AirAACPlayer dispatchEvent:@"LOGGING" withInfo:message];
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    [playerManager.player stop];
+    playerManager.player.currentTime = 0;
+    return NULL;
 }
 
-@end
+DEFINE_ANE_FUNCTION(AirAACPlayer_getDuration)
+{
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    return FPANE_IntToFREObject(1000*playerManager.player.duration);
+}
 
-
-#pragma mark - C interface
+DEFINE_ANE_FUNCTION(AirAACPlayer_getProgress)
+{
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    double progress = playerManager.player.isPlaying ? playerManager.player.currentTime : playerManager.player.duration;
+    return FPANE_IntToFREObject(1000*progress);
+}
 
 void AirAACPlayerContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx,
                         uint32_t* numFunctionsToTest, const FRENamedFunction** functionsToSet) 
 {
-    // Register the links btwn AS3 and ObjC. (dont forget to modify the nbFuntionsToLink integer if you are adding/removing functions)
-    NSInteger nbFuntionsToLink = 0;
-    *numFunctionsToTest = nbFuntionsToLink;
+    static FRENamedFunction functions[] = {
+        MAP_FUNCTION(AirAACPlayer_load, NULL),
+        MAP_FUNCTION(AirAACPlayer_play, NULL),
+        MAP_FUNCTION(AirAACPlayer_pause, NULL),
+        MAP_FUNCTION(AirAACPlayer_stop, NULL),
+        MAP_FUNCTION(AirAACPlayer_getDuration, NULL),
+        MAP_FUNCTION(AirAACPlayer_getProgress, NULL)
+    };
+    *numFunctionsToTest = sizeof(functions) / sizeof(FRENamedFunction);
+    *functionsToSet = functions;
     
-    FRENamedFunction* func = (FRENamedFunction*) malloc(sizeof(FRENamedFunction) * nbFuntionsToLink);
-    
-    *functionsToSet = func;
-    
-    AirAACPlayerCtx = ctx;
+    AirAACPlayerManager *playerManager = [[AirAACPlayerManager alloc] initWithContext:ctx];
+    FRESetContextNativeData(ctx, (void *)CFBridgingRetain(playerManager));
 }
 
-void AirAACPlayerContextFinalizer(FREContext ctx) { }
+void AirAACPlayerContextFinalizer(FREContext ctx)
+{
+    CFTypeRef playerManagerRef;
+    FREGetContextNativeData(ctx, (void **)&playerManagerRef);
+    CFBridgingRelease(playerManagerRef);
+}
 
 void AirAACPlayerInitializer(void** extDataToSet, FREContextInitializer* ctxInitializerToSet, FREContextFinalizer* ctxFinalizerToSet)
 {
@@ -89,4 +104,4 @@ void AirAACPlayerInitializer(void** extDataToSet, FREContextInitializer* ctxInit
 	*ctxFinalizerToSet = &AirAACPlayerContextFinalizer;
 }
 
-void AirAACPlayerFinalizer(void *extData) { }
+void AirAACPlayerFinalizer(void *extData) {}

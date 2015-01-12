@@ -18,69 +18,136 @@
 
 package com.freshplanet.ane.AirAACPlayer;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.view.ViewGroup;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
-import com.freshplanet.ane.AirAACPlayer.functions.*;
+import com.freshplanet.ane.AirAACPlayer.functions.GetDurationFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.GetProgressFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.LoadFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.PauseFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.PlayFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.StopFunction;
 
-public class ExtensionContext extends FREContext
+public class ExtensionContext extends FREContext implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener
 {
-    private MediaPlayer _mediaPlayer;
-    private String _mediaUrl;
+    private MediaPlayer _player;
+    
+    public ExtensionContext()
+    {
+    	super();
+    	
+    	_player = new MediaPlayer();
+    	_player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    	_player.setOnPreparedListener(this);
+    	_player.setOnErrorListener(this);
+    }
     
     @Override
-    public void dispose() {}
+    public void dispose()
+    {
+    	_player.stop();
+    	_player.release();
+    }
 
     @Override
     public Map<String, FREFunction> getFunctions()
     {
         Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
         
-        functions.put("loadUrl", new LoadUrlFunction());
-        functions.put("play", new PlayFunction());
-        functions.put("pause", new PauseFunction());
-        functions.put("stop", new StopFunction());
-        functions.put("close", new CloseFunction());
-        functions.put("getLength", new GetLengthFunction());
-        functions.put("getProgress", new GetProgressFunction());
+        functions.put("AirAACPlayer_load", new LoadFunction());
+        functions.put("AirAACPlayer_play", new PlayFunction());
+        functions.put("AirAACPlayer_pause", new PauseFunction());
+        functions.put("AirAACPlayer_stop", new StopFunction());
+        functions.put("AirAACPlayer_getDuration", new GetDurationFunction());
+        functions.put("AirAACPlayer_getProgress", new GetProgressFunction());
         
         return functions;
     }
     
-    public void setMediaUrl( String url ) 
+    public void load(String url)
     {
-    	_mediaUrl = url;
+    	try
+    	{
+    		_player.setDataSource(url);
+        	_player.prepareAsync();
+		}
+    	catch (IOException e)
+    	{
+    		e.printStackTrace();
+		}
     }
     
-    public String getMediaUrl() 
+    public void play(int position)
     {
-    	return _mediaUrl;
+    	try
+    	{
+    		if (position > 0)
+    		{
+    			_player.seekTo(position);
+    		}
+			_player.start();
+		}
+    	catch (IllegalStateException e)
+    	{
+			e.printStackTrace();
+		}
     }
     
-    public ViewGroup getRootContainer()
+    public void pause()
     {
-        return (ViewGroup)((ViewGroup)getActivity().findViewById(android.R.id.content)).getChildAt(0);
+    	try
+    	{
+    		if (_player.isPlaying())
+    		{
+    			_player.pause();
+    		}
+		}
+    	catch (IllegalStateException e)
+    	{
+    		e.printStackTrace();
+		}
     }
     
-    public MediaPlayer getPlayer()
+    public void stop()
     {
-        if (_mediaPlayer == null)
-        {
-            _mediaPlayer = new MediaPlayer();
-            _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        }
-        
-        return _mediaPlayer;
+    	try
+    	{
+    		if (_player.isPlaying())
+    		{
+    			_player.pause();
+    		}
+			_player.seekTo(0);
+		}
+    	catch (IllegalStateException e)
+    	{
+			e.printStackTrace();
+		}
     }
     
-    public void setPlayer(MediaPlayer player)
+    public int getDuration()
     {
-        this._mediaPlayer = player;
+    	return _player.getDuration();
+    }
+    
+    public int getProgress()
+    {
+    	return _player.getCurrentPosition();
+    }
+    
+    public void onPrepared(MediaPlayer mp)
+    {
+    	dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
+    }
+    
+    public boolean onError(MediaPlayer mp, int what, int extra)
+    {
+    	dispatchStatusEventAsync("AAC_PLAYER_ERROR", "" + what);
+    	return true;
     }
 }
