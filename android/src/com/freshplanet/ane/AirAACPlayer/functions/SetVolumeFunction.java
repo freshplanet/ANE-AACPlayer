@@ -9,7 +9,7 @@ public class SetVolumeFunction extends BaseFunction
     @Override
     public FREObject call(FREContext context, FREObject[] args)
     {
-        float volume = getFloatFromFREObject(args[0]);
+        float volume = (float)getDoubleFromFREObject(args[0]);
         ((ExtensionContext)context).setVolume(volume);
         return null;
     }

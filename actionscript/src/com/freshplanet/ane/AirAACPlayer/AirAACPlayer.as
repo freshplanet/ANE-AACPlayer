@@ -122,7 +122,7 @@ package com.freshplanet.ane.AirAACPlayer
 		 *
 		 * @param volume:Number float between 0.0 and 1.0
 		 */
-		public function set volume(volume:Number = 1):void
+		public function set volume(volume:Number):void
 		{
 			if (!isSupported || state != STATE_READY) return;
 			_context.call("AirAACPlayer_setVolume", volume);
