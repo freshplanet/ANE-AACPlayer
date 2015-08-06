@@ -30,6 +30,19 @@ public class BaseFunction implements FREFunction
 			return 0;
 		}
 	}
+
+	protected double getDoubleFromFREObject(FREObject object)
+	{
+		try
+		{
+			return object.getAsDouble();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return 0;
+		}
+	}
 	
 	protected String getStringFromFREObject(FREObject object)
 	{

@@ -33,6 +33,7 @@ import com.freshplanet.ane.AirAACPlayer.functions.LoadFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.PauseFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.PlayFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.StopFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.SetVolumeFunction;
 
 public class ExtensionContext extends FREContext implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener
 {
@@ -66,6 +67,7 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
         functions.put("AirAACPlayer_stop", new StopFunction());
         functions.put("AirAACPlayer_getDuration", new GetDurationFunction());
         functions.put("AirAACPlayer_getProgress", new GetProgressFunction());
+		functions.put("AirAACPlayer_setVolume", new SetVolumeFunction());
         
         return functions;
     }
@@ -139,7 +141,13 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
     {
     	return _player.getCurrentPosition();
     }
-    
+
+	public void setVolume(float volume) {
+		volume = volume < 0 ? 0 : volume;
+		volume = volume > 1 ? 1 : volume;
+		_player.setVolume(volume, volume);
+	}
+
     public void onPrepared(MediaPlayer mp)
     {
     	dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
