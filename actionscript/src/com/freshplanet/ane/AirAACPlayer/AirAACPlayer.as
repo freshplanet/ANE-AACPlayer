@@ -113,6 +113,20 @@ package com.freshplanet.ane.AirAACPlayer
 			if (!isSupported || state != STATE_READY) return -1;
 			return _context.call("AirAACPlayer_getProgress") as int;
 		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		// Setters
+
+		/**
+		 * Set the media volume.
+		 *
+		 * @param volume:Number float between 0.0 and 1.0
+		 */
+		public function set volume(volume:Number = 1):void
+		{
+			if (!isSupported || state != STATE_READY) return;
+			_context.call("AirAACPlayer_setVolume", volume);
+		}
 		
 		
 		////////////////////////////////////////////////////////////////////////////////
