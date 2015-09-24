@@ -38,9 +38,26 @@
 
 - (void)loadURL:(NSURL *)url
 {
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    self.connection = [NSURLConnection connectionWithRequest:request delegate:self];
-    [self.connection start];
+    if ([url isFileURL]) {
+        
+        NSError *error;
+        self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+        [self handlePlayerEventDispatch:error];
+    }
+    else
+    {
+        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+        self.connection = [NSURLConnection connectionWithRequest:request delegate:self];
+        [self.connection start];
+    }
+}
+
+- (void)handlePlayerEventDispatch:(NSError*)error
+{
+    if (self.player)
+        FPANE_DispatchEventWithInfo(self.context, @"AAC_PLAYER_PREPARED", @"OK");
+    else
+        FPANE_DispatchEventWithInfo(self.context, @"AAC_PLAYER_ERROR", [error description]);
 }
 
 #pragma mark - NSURLConnectionDataDelegate
@@ -59,14 +76,7 @@
     {
         NSError *error;
         self.player = [[AVAudioPlayer alloc] initWithData:self.data error:&error];
-        if (self.player)
-        {
-            FPANE_DispatchEventWithInfo(self.context, @"AAC_PLAYER_PREPARED", @"OK");
-        }
-        else
-        {
-            FPANE_DispatchEventWithInfo(self.context, @"AAC_PLAYER_ERROR", [error description]);
-        }
+        [self handlePlayerEventDispatch:error];
     }
 }
 
