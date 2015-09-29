@@ -16,28 +16,28 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////-->
 
-<extension xmlns="http://ns.adobe.com/air/extension/3.1">
+<extension xmlns="http://ns.adobe.com/air/extension/17.0">
   <id>com.freshplanet.AirAACPlayer</id>
-  <versionNumber>1.0</versionNumber>
+  <versionNumber>2</versionNumber>
   <platforms>
     <platform name="iPhone-ARM">
-            <applicationDeployment>
-                <nativeLibrary>libAirAACPlayer.a</nativeLibrary>
-                <initializer>AirAACPlayerInitializer</initializer> 
-                <finalizer>AirAACPlayerFinalizer</finalizer>
-            </applicationDeployment>
+      <applicationDeployment>
+          <nativeLibrary>libAirAACPlayer.a</nativeLibrary>
+          <initializer>AirAACPlayerInitializer</initializer> 
+          <finalizer>AirAACPlayerFinalizer</finalizer>
+      </applicationDeployment>
     </platform>
- 
-   <platform name="Android-ARM"> 
-        <applicationDeployment> 
-            <nativeLibrary>libAirAACPlayer.jar</nativeLibrary> 
-            <initializer>com.freshplanet.ane.AirAACPlayer.Extension</initializer> 
-            <finalizer>com.freshplanet.ane.AirAACPlayer.Extension</finalizer> 
-        </applicationDeployment>
+
+    <platform name="Android-ARM"> 
+      <applicationDeployment> 
+        <nativeLibrary>libAirAACPlayer.jar</nativeLibrary> 
+        <initializer>com.freshplanet.ane.AirAACPlayer.Extension</initializer> 
+        <finalizer>com.freshplanet.ane.AirAACPlayer.Extension</finalizer> 
+      </applicationDeployment>
     </platform>
     
     <platform name="default"> 
-        <applicationDeployment/> 
+      <applicationDeployment/> 
     </platform> 
   </platforms>
 </extension>
