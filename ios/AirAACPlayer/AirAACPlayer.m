@@ -72,6 +72,13 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_getProgress)
     return FPANE_IntToFREObject(1000*progress);
 }
 
+DEFINE_ANE_FUNCTION(AirAACPlayer_getDownload)
+{
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    int download = playerManager.download;
+    return FPANE_DoubleToFREObject(download);
+}
+
 DEFINE_ANE_FUNCTION(AirAACPlayer_setVolume)
 {
     float volume = FPANE_FREObjectToDouble(argv[0]);
@@ -92,6 +99,7 @@ void AirAACPlayerContextInitializer(void* extData, const uint8_t* ctxType, FRECo
         MAP_FUNCTION(AirAACPlayer_stop, NULL),
         MAP_FUNCTION(AirAACPlayer_getDuration, NULL),
         MAP_FUNCTION(AirAACPlayer_getProgress, NULL),
+        MAP_FUNCTION(AirAACPlayer_getDownload, NULL),
         MAP_FUNCTION(AirAACPlayer_setVolume, NULL)
     };
     *numFunctionsToTest = sizeof(functions) / sizeof(FRENamedFunction);

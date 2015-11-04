@@ -38,6 +38,7 @@ package com.freshplanet.ane.AirAACPlayer
         
         public static const AAC_PLAYER_PREPARED:String = "AAC_PLAYER_PREPARED";
         public static const AAC_PLAYER_ERROR:String = "AAC_PLAYER_ERROR";
+        public static const AAC_PLAYER_DOWNLOAD:String = "AAC_PLAYER_DOWNLOAD";
 		
 		private static const EXTENSION_ID:String = "com.freshplanet.AirAACPlayer";
 		
@@ -112,6 +113,13 @@ package com.freshplanet.ane.AirAACPlayer
 		{
 			if (!isSupported || state != STATE_READY) return -1;
 			return _context.call("AirAACPlayer_getProgress") as int;
+		}
+
+		/** Download Progress percentage between 0 and 100 */
+		public function get download():int
+		{
+			if (!isSupported) return 0;
+			return _context.call("AirAACPlayer_getDownload") as int;
 		}
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -192,6 +200,10 @@ package com.freshplanet.ane.AirAACPlayer
             {
 				_state = STATE_ERROR;
                 dispatchEvent(new ErrorEvent(event.code, false, false, event.level));
+            }
+            else if (event.code == AAC_PLAYER_DOWNLOAD)
+            {
+                dispatchEvent(new Event(event.code));
             }
         }
     }

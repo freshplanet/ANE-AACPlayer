@@ -29,15 +29,17 @@ import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.GetDurationFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.GetProgressFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.GetDownloadFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.LoadFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.PauseFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.PlayFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.StopFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.SetVolumeFunction;
 
-public class ExtensionContext extends FREContext implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener
+public class ExtensionContext extends FREContext implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener
 {
     private MediaPlayer _player;
+    private int _download;
     
     public ExtensionContext()
     {
@@ -67,6 +69,7 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
         functions.put("AirAACPlayer_stop", new StopFunction());
         functions.put("AirAACPlayer_getDuration", new GetDurationFunction());
         functions.put("AirAACPlayer_getProgress", new GetProgressFunction());
+        functions.put("AirAACPlayer_getDownload", new GetDownloadFunction());
 		functions.put("AirAACPlayer_setVolume", new SetVolumeFunction());
         
         return functions;
@@ -142,6 +145,11 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
     	return _player.getCurrentPosition();
     }
 
+    public int getDownload()
+    {
+        return _download;
+    }
+
 	public void setVolume(float volume) {
 		volume = volume < 0 ? 0 : volume;
 		volume = volume > 1 ? 1 : volume;
@@ -157,5 +165,10 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
     {
     	dispatchStatusEventAsync("AAC_PLAYER_ERROR", "" + what);
     	return true;
+    }
+    public void onBufferingUpdate (MediaPlayer mp, int percent)
+    {
+        _download = percent;
+        dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", percent);
     }
 }
