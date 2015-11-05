@@ -13,9 +13,9 @@
 
 @property (nonatomic, readonly) FREContext context;
 @property (nonatomic, readonly) NSMutableData *data;
-@property (nonatomic, readonly) int *size;
-@property (nonatomic, readonly) int *downloaded;
-@property (nonatomic, readonly) int *download;
+@property (nonatomic, readwrite) long long size;
+@property (nonatomic, readwrite) long downloaded;
+@property (nonatomic, readwrite) int download;
 @property (nonatomic, strong) NSURLConnection *connection;
 @property (nonatomic, strong, readwrite) AVAudioPlayer *player;
 

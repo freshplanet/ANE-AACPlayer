@@ -169,6 +169,6 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
     public void onBufferingUpdate (MediaPlayer mp, int percent)
     {
         _download = percent;
-        dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", percent);
+        dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "" + percent);
     }
 }
