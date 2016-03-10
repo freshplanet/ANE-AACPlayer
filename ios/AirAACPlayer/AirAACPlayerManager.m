@@ -37,6 +37,7 @@
 - (void)dealloc
 {
     [self.connection cancel];
+    [self.player stop];
 }
 
 - (void)loadURL:(NSURL *)url

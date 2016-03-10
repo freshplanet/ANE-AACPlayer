@@ -118,7 +118,7 @@ package com.freshplanet.ane.AirAACPlayer
 		/** Download Progress percentage between 0 and 100 */
 		public function get download():int
 		{
-			if (!isSupported) return 0;
+			if (!isSupported || _state == STATE_DISPOSED) return 0;
 			return _context.call("AirAACPlayer_getDownload") as int;
 		}
 
