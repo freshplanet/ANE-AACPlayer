@@ -18,42 +18,56 @@
 
 package com.freshplanet.ane.AirAACPlayer;
 
-import java.io.IOException;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.util.Log;
+import com.adobe.fre.FREContext;
+import com.adobe.fre.FREFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.*;
+import com.google.android.exoplayer.ExoPlaybackException;
+import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
+import com.google.android.exoplayer.MediaCodecSelector;
+import com.google.android.exoplayer.extractor.ExtractorSampleSource;
+import com.google.android.exoplayer.upstream.Allocator;
+import com.google.android.exoplayer.upstream.DataSource;
+import com.google.android.exoplayer.upstream.DefaultAllocator;
+import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 
-import com.adobe.fre.FREContext;
-import com.adobe.fre.FREFunction;
-import com.freshplanet.ane.AirAACPlayer.functions.GetDurationFunction;
-import com.freshplanet.ane.AirAACPlayer.functions.GetProgressFunction;
-import com.freshplanet.ane.AirAACPlayer.functions.GetDownloadFunction;
-import com.freshplanet.ane.AirAACPlayer.functions.LoadFunction;
-import com.freshplanet.ane.AirAACPlayer.functions.PauseFunction;
-import com.freshplanet.ane.AirAACPlayer.functions.PlayFunction;
-import com.freshplanet.ane.AirAACPlayer.functions.StopFunction;
-import com.freshplanet.ane.AirAACPlayer.functions.SetVolumeFunction;
-
-public class ExtensionContext extends FREContext implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener
+public class ExtensionContext extends FREContext implements ExoPlayer.Listener
 {
-    private MediaPlayer _player;
+	public static final String TAG = "AirAACPlayer.Context";
+	public static final int BUFFER_SEGMENT_SIZE = 1000;
+	public static final int BUFFER_SEGMENT_COUNT = 500;
+    private ExoPlayer _player;
+	private MediaCodecAudioTrackRenderer _renderer;
+	private ExtractorSampleSource _sampleSource;
+	private DataSource _dataSource;
     private int _download;
+	private String _url = "<no url assigned>";
     
     public ExtensionContext()
     {
     	super();
-    	
-    	_player = new MediaPlayer();
-    	_player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-    	_player.setOnPreparedListener(this);
-    	_player.setOnErrorListener(this);
+    	Log.d(TAG, "creating context");
+		_player = ExoPlayer.Factory.newInstance(1);
+		_player.addListener(this);
     }
+
+	private void createPlayer()
+	{
+
+
+	}
     
     @Override
     public void dispose()
     {
+		Log.d("AirAACPlayer", "disposing context");
     	_player.stop();
     	_player.release();
     }
@@ -62,7 +76,7 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
     public Map<String, FREFunction> getFunctions()
     {
         Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
-        
+
         functions.put("AirAACPlayer_load", new LoadFunction());
         functions.put("AirAACPlayer_play", new PlayFunction());
         functions.put("AirAACPlayer_pause", new PauseFunction());
@@ -71,22 +85,21 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
         functions.put("AirAACPlayer_getProgress", new GetProgressFunction());
         functions.put("AirAACPlayer_getDownload", new GetDownloadFunction());
 		functions.put("AirAACPlayer_setVolume", new SetVolumeFunction());
-        
+
         return functions;
     }
-    
+
     public void load(String url)
     {
-    	try
-    	{
-    		_player.setDataSource(url);
-        	_player.prepareAsync();
-		}
-    	catch (IOException e)
-    	{
-    		e.printStackTrace();
-		}
-    }
+		_url = url;
+		Uri uri = Uri.parse(_url);
+		Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
+		_dataSource= new DefaultUriDataSource(getActivity().getApplicationContext(), null);
+		_sampleSource = new ExtractorSampleSource(uri, _dataSource, allocator, BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE);
+		_renderer = new MediaCodecAudioTrackRenderer(_sampleSource, MediaCodecSelector.DEFAULT);
+		_player.prepare(_renderer);
+
+	}
     
     public void play(int position)
     {
@@ -96,11 +109,12 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
     		{
     			_player.seekTo(position);
     		}
-			_player.start();
+			_player.setPlayWhenReady(true);
 		}
     	catch (IllegalStateException e)
     	{
-			e.printStackTrace();
+			Log.e(TAG, "Error playing " + _url, e);
+			onError(_player, 0, 0);
 		}
     }
     
@@ -108,14 +122,15 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
     {
     	try
     	{
-    		if (_player.isPlaying())
+    		if (_player.getPlayWhenReady())
     		{
-    			_player.pause();
+    			_player.setPlayWhenReady(false);
     		}
 		}
     	catch (IllegalStateException e)
     	{
-    		e.printStackTrace();
+    		Log.e(TAG, "Error pausing " + _url, e);
+			onError(_player, 0, 0);
 		}
     }
     
@@ -123,26 +138,27 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
     {
     	try
     	{
-    		if (_player.isPlaying())
+    		if (_player.getPlayWhenReady())
     		{
-    			_player.pause();
+    			_player.setPlayWhenReady(false);
     		}
 			_player.seekTo(0);
 		}
     	catch (IllegalStateException e)
     	{
-			e.printStackTrace();
+			Log.e(TAG, "Error stopping " + _url, e);
+			onError(_player, 0, 0);
 		}
     }
     
     public int getDuration()
     {
-    	return _player.getDuration();
+    	return (int)_player.getDuration();
     }
     
     public int getProgress()
     {
-    	return _player.getCurrentPosition();
+    	return (int)_player.getCurrentPosition();
     }
 
     public int getDownload()
@@ -153,22 +169,39 @@ public class ExtensionContext extends FREContext implements MediaPlayer.OnPrepar
 	public void setVolume(float volume) {
 		volume = volume < 0 ? 0 : volume;
 		volume = volume > 1 ? 1 : volume;
-		_player.setVolume(volume, volume);
+		_player.sendMessage(_renderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME, volume);
 	}
 
-    public void onPrepared(MediaPlayer mp)
+    public void onPrepared(ExoPlayer mp)
     {
     	dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
     }
     
-    public boolean onError(MediaPlayer mp, int what, int extra)
+    public boolean onError(ExoPlayer mp, int what, int extra)
     {
     	dispatchStatusEventAsync("AAC_PLAYER_ERROR", "" + what);
     	return true;
     }
     public void onBufferingUpdate (MediaPlayer mp, int percent)
     {
-        _download = percent;
-        dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "" + percent);
+        _download = _player.getBufferedPercentage();
+        dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "" + _download);
     }
+
+	@Override
+	public void onPlayerStateChanged(boolean b, int i) {
+		if(_player.getPlaybackState() == ExoPlayer.STATE_READY) {
+			dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
+		}
+	}
+
+	@Override
+	public void onPlayWhenReadyCommitted() {
+
+	}
+
+	@Override
+	public void onPlayerError(ExoPlaybackException e) {
+		dispatchStatusEventAsync("AAC_PLAYER_ERROR", "" + e.getMessage());
+	}
 }
