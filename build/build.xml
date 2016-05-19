@@ -61,7 +61,7 @@
             <classpath>
                 <pathelement location="${android.platform.home}/android.jar"/>
                 <pathelement location="${air.sdk.home}/lib/android/FlashRuntimeExtensions.jar"/>
-                <pathelement location="../android/libs/ExoPlayer.jar"/>
+                <pathelement location="../android/libs/exoplayer-r1.5.6.jar"/>
             </classpath>
         </javac>
 

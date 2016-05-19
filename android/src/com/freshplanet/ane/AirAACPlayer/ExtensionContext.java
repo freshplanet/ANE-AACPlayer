@@ -18,31 +18,32 @@
 
 package com.freshplanet.ane.AirAACPlayer;
 
-import android.media.MediaPlayer;
+import android.content.Context;
+import android.media.MediaCodec;
 import android.net.Uri;
 import android.util.Log;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.*;
-import com.google.android.exoplayer.ExoPlaybackException;
-import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
-import com.google.android.exoplayer.MediaCodecSelector;
+import com.google.android.exoplayer.*;
+import com.google.android.exoplayer.audio.AudioTrack;
 import com.google.android.exoplayer.extractor.ExtractorSampleSource;
-import com.google.android.exoplayer.upstream.Allocator;
-import com.google.android.exoplayer.upstream.DataSource;
-import com.google.android.exoplayer.upstream.DefaultAllocator;
-import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import com.google.android.exoplayer.extractor.mp4.FragmentedMp4Extractor;
+import com.google.android.exoplayer.extractor.mp4.Mp4Extractor;
+import com.google.android.exoplayer.extractor.ts.AdtsExtractor;
+import com.google.android.exoplayer.upstream.*;
+import com.google.android.exoplayer.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class ExtensionContext extends FREContext implements ExoPlayer.Listener
+public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
+		MediaCodecAudioTrackRenderer.EventListener, TransferListener
 {
 	public static final String TAG = "AirAACPlayer.Context";
-	public static final int BUFFER_SEGMENT_SIZE = 1000;
-	public static final int BUFFER_SEGMENT_COUNT = 500;
+	public static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
+	public static final int BUFFER_SEGMENT_COUNT = 256;
     private ExoPlayer _player;
 	private MediaCodecAudioTrackRenderer _renderer;
 	private ExtractorSampleSource _sampleSource;
@@ -57,12 +58,6 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener
 		_player = ExoPlayer.Factory.newInstance(1);
 		_player.addListener(this);
     }
-
-	private void createPlayer()
-	{
-
-
-	}
     
     @Override
     public void dispose()
@@ -94,11 +89,12 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener
 		_url = url;
 		Uri uri = Uri.parse(_url);
 		Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
-		_dataSource= new DefaultUriDataSource(getActivity().getApplicationContext(), null);
-		_sampleSource = new ExtractorSampleSource(uri, _dataSource, allocator, BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE);
+		Context context = getActivity().getApplicationContext();
+		_dataSource= new DefaultUriDataSource(context, this, Util.getUserAgent(context, "SongPopAgent"), true);
+		_sampleSource = new ExtractorSampleSource(uri, _dataSource, allocator,
+				BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE, new Mp4Extractor(), new FragmentedMp4Extractor(), new AdtsExtractor());
 		_renderer = new MediaCodecAudioTrackRenderer(_sampleSource, MediaCodecSelector.DEFAULT);
 		_player.prepare(_renderer);
-
 	}
     
     public void play(int position)
@@ -113,8 +109,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener
 		}
     	catch (IllegalStateException e)
     	{
-			Log.e(TAG, "Error playing " + _url, e);
-			onError(_player, 0, 0);
+			onError(e);
 		}
     }
     
@@ -129,8 +124,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener
 		}
     	catch (IllegalStateException e)
     	{
-    		Log.e(TAG, "Error pausing " + _url, e);
-			onError(_player, 0, 0);
+			onError(e);
 		}
     }
     
@@ -146,8 +140,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener
 		}
     	catch (IllegalStateException e)
     	{
-			Log.e(TAG, "Error stopping " + _url, e);
-			onError(_player, 0, 0);
+			onError(e);
 		}
     }
     
@@ -171,21 +164,11 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener
 		volume = volume > 1 ? 1 : volume;
 		_player.sendMessage(_renderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME, volume);
 	}
-
-    public void onPrepared(ExoPlayer mp)
-    {
-    	dispatchStatusEventAsync("AAC_PLAYER_PREPARED", "OK");
-    }
     
-    public boolean onError(ExoPlayer mp, int what, int extra)
+    public void onError(Exception e)
     {
-    	dispatchStatusEventAsync("AAC_PLAYER_ERROR", "" + what);
-    	return true;
-    }
-    public void onBufferingUpdate (MediaPlayer mp, int percent)
-    {
-        _download = _player.getBufferedPercentage();
-        dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "" + _download);
+    	dispatchStatusEventAsync("AAC_PLAYER_ERROR", "" + e.getMessage());
+		Log.e(TAG, _url, e);
     }
 
 	@Override
@@ -203,5 +186,51 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener
 	@Override
 	public void onPlayerError(ExoPlaybackException e) {
 		dispatchStatusEventAsync("AAC_PLAYER_ERROR", "" + e.getMessage());
+	}
+
+	@Override
+	public void onAudioTrackInitializationError(AudioTrack.InitializationException e) {
+		onError(e);
+	}
+
+	@Override
+	public void onAudioTrackWriteError(AudioTrack.WriteException e) {
+		onError(e);
+	}
+
+	@Override
+	public void onAudioTrackUnderrun(int i, long l, long l1) {
+
+	}
+
+	@Override
+	public void onDecoderInitializationError(MediaCodecTrackRenderer.DecoderInitializationException e) {
+		onError(e);
+	}
+
+	@Override
+	public void onCryptoError(MediaCodec.CryptoException e) {
+		onError(e);
+	}
+
+	@Override
+	public void onDecoderInitialized(String s, long l, long l1) {
+
+	}
+
+	@Override
+	public void onTransferStart() {
+
+	}
+
+	@Override
+	public void onBytesTransferred(int i) {
+		_download = _player.getBufferedPercentage();
+		dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "" + _download);
+	}
+
+	@Override
+	public void onTransferEnd() {
+
 	}
 }
