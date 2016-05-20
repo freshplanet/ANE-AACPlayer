@@ -18,12 +18,13 @@
 
 package com.freshplanet.ane.AirAACPlayer;
 
-import android.content.Context;
 import android.media.MediaCodec;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
+import com.adobe.fre.FREObject;
 import com.freshplanet.ane.AirAACPlayer.functions.*;
 import com.google.android.exoplayer.*;
 import com.google.android.exoplayer.audio.AudioTrack;
@@ -31,40 +32,56 @@ import com.google.android.exoplayer.extractor.ExtractorSampleSource;
 import com.google.android.exoplayer.extractor.mp4.FragmentedMp4Extractor;
 import com.google.android.exoplayer.extractor.mp4.Mp4Extractor;
 import com.google.android.exoplayer.extractor.ts.AdtsExtractor;
-import com.google.android.exoplayer.upstream.*;
-import com.google.android.exoplayer.util.Util;
+import com.google.android.exoplayer.upstream.Allocator;
+import com.google.android.exoplayer.upstream.ByteArrayDataSource;
+import com.google.android.exoplayer.upstream.DataSource;
+import com.google.android.exoplayer.upstream.DefaultAllocator;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
-		MediaCodecAudioTrackRenderer.EventListener, TransferListener
+		MediaCodecAudioTrackRenderer.EventListener
 {
 	public static final String TAG = "AirAACPlayer.Context";
-	public static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
-	public static final int BUFFER_SEGMENT_COUNT = 256;
+	public static final int BUFFER_SEGMENT_SIZE = 32 * 1024;
+	public static final int BUFFER_SEGMENT_COUNT = 128;
     private ExoPlayer _player;
 	private MediaCodecAudioTrackRenderer _renderer;
 	private ExtractorSampleSource _sampleSource;
 	private DataSource _dataSource;
     private int _download;
+	private FileLoader _loader;
+	private byte[] _loadedData;
 	private String _url = "<no url assigned>";
     
     public ExtensionContext()
     {
     	super();
     	Log.d(TAG, "creating context");
-		_player = ExoPlayer.Factory.newInstance(1);
-		_player.addListener(this);
     }
     
     @Override
     public void dispose()
     {
 		Log.d("AirAACPlayer", "disposing context");
-    	_player.stop();
-    	_player.release();
+		if(_player != null) {
+			_player.stop();
+			_player.release();
+			_player = null;
+		}
+		if(_loader != null) {
+			_loader.cancel(true);
+			_loader = null;
+		}
     }
 
     @Override
@@ -73,28 +90,112 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
         Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
 
         functions.put("AirAACPlayer_load", new LoadFunction());
+		functions.put("AirAACPlayer_prepare", new PrepareFunction());
         functions.put("AirAACPlayer_play", new PlayFunction());
         functions.put("AirAACPlayer_pause", new PauseFunction());
         functions.put("AirAACPlayer_stop", new StopFunction());
         functions.put("AirAACPlayer_getDuration", new GetDurationFunction());
-        functions.put("AirAACPlayer_getProgress", new GetProgressFunction());
+		functions.put("AirAACPlayer_getProgress", new GetProgressFunction());
         functions.put("AirAACPlayer_getDownload", new GetDownloadFunction());
 		functions.put("AirAACPlayer_setVolume", new SetVolumeFunction());
 
         return functions;
     }
 
-    public void load(String url)
+	public void load(String url)
     {
 		_url = url;
-		Uri uri = Uri.parse(_url);
-		Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
-		Context context = getActivity().getApplicationContext();
-		_dataSource= new DefaultUriDataSource(context, this, Util.getUserAgent(context, "SongPopAgent"), true);
-		_sampleSource = new ExtractorSampleSource(uri, _dataSource, allocator,
-				BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE, new Mp4Extractor(), new FragmentedMp4Extractor(), new AdtsExtractor());
-		_renderer = new MediaCodecAudioTrackRenderer(_sampleSource, MediaCodecSelector.DEFAULT);
-		_player.prepare(_renderer);
+		_loader = new FileLoader();
+		_loader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, _url);
+	}
+
+	private class FileLoader extends AsyncTask<String, Integer, byte[]> {
+
+		private HttpURLConnection connection;
+		private Exception error;
+
+		@Override
+		protected byte[] doInBackground(String... params) {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024 * 32);
+
+			try {
+				connection = (HttpURLConnection) new URL(params[0]).openConnection();
+				connection.setReadTimeout(10000);
+				connection.connect();
+				int bytesTotal = connection.getContentLength();
+				int bytesLoaded = 0;
+				InputStream stream = connection.getInputStream();
+
+				byte[] chunk = new byte[4096];
+				int bytesRead;
+
+				while ((bytesRead = stream.read(chunk)) > 0) {
+					if(isCancelled()) {
+						connection.disconnect();
+						return null;
+					}
+					bytesLoaded += bytesRead;
+					outputStream.write(chunk, 0, bytesRead);
+					publishProgress(bytesLoaded, bytesTotal);
+				}
+			} catch (MalformedURLException e) {
+				error = e;
+				return null;
+			} catch (IOException e) {
+				error = e;
+				return null;
+			}
+
+			return outputStream.toByteArray();
+		}
+
+		@Override
+		protected void onPostExecute(byte[] bytes) {
+			if(bytes == null && error != null) {
+				onError(error);
+			} else {
+				onLoaded(bytes);
+			}
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			onProgress(values[0], values[1]);
+		}
+	}
+
+	private void onLoaded(byte[] bytes)
+	{
+		_loadedData = bytes;
+		dispatchStatusEventAsync("AAC_PLAYER_LOADED", "OK");
+	}
+
+	private class PrepareFunction implements FREFunction
+	{
+		@Override
+		public FREObject call(FREContext freContext, FREObject[] freObjects) {
+			if(_player == null && _loadedData != null) {
+				_player = ExoPlayer.Factory.newInstance(1, 250, 5000);
+				_player.addListener(ExtensionContext.this);
+				Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
+				_dataSource = new ByteArrayDataSource(_loadedData);
+				_sampleSource = new ExtractorSampleSource(Uri.parse(_url), _dataSource, allocator,
+						BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE, new Mp4Extractor(), new FragmentedMp4Extractor(), new AdtsExtractor());
+				_renderer = new MediaCodecAudioTrackRenderer(_sampleSource, MediaCodecSelector.DEFAULT);
+				_player.prepare(_renderer);
+			}
+			return null;
+		}
+	}
+
+	private void onProgress(int bytesLoaded, int bytesTotal)
+	{
+		if(bytesTotal > 0) {
+			_download = Math.max(0, Math.min(100, (int) ((float)bytesLoaded / (float) bytesTotal * 100)) );
+		} else {
+			_download = 0;
+		}
+		dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "" + _download);
 	}
     
     public void play(int position)
@@ -215,22 +316,6 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 
 	@Override
 	public void onDecoderInitialized(String s, long l, long l1) {
-
-	}
-
-	@Override
-	public void onTransferStart() {
-
-	}
-
-	@Override
-	public void onBytesTransferred(int i) {
-		_download = _player.getBufferedPercentage();
-		dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "" + _download);
-	}
-
-	@Override
-	public void onTransferEnd() {
 
 	}
 }
