@@ -13,6 +13,9 @@
 
 @property (nonatomic, readonly) FREContext context;
 @property (nonatomic, readonly) NSMutableData *data;
+@property (nonatomic, readwrite) long long size;
+@property (nonatomic, readwrite) long downloaded;
+@property (nonatomic, readwrite) int download;
 @property (nonatomic, strong) NSURLConnection *connection;
 @property (nonatomic, strong, readwrite) AVAudioPlayer *player;
 
@@ -34,6 +37,7 @@
 - (void)dealloc
 {
     [self.connection cancel];
+    [self.player stop];
 }
 
 - (void)loadURL:(NSURL *)url
@@ -48,6 +52,8 @@
     {
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         self.connection = [NSURLConnection connectionWithRequest:request delegate:self];
+        self.downloaded = 0;
+        self.size = 0;
         [self.connection start];
     }
 }
@@ -66,7 +72,18 @@
 {
     if (connection == self.connection)
     {
+        self.downloaded += [data length];
+        self.download = self.size ? (int)(self.downloaded * 100 / self.size) : 0;
+        FPANE_DispatchEvent(self.context, @"AAC_PLAYER_DOWNLOAD");
         [self.data appendData:data];
+    }
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    if (connection == self.connection)
+    {
+        self.size = response.expectedContentLength;
     }
 }
 

@@ -12,6 +12,7 @@
 @interface AirAACPlayerManager : NSObject <NSURLConnectionDataDelegate>
 
 @property (nonatomic, readonly) AVAudioPlayer *player;
+@property (nonatomic, readonly) int download;
 
 - (instancetype)initWithContext:(FREContext)context;
 - (void)loadURL:(NSURL *)url;

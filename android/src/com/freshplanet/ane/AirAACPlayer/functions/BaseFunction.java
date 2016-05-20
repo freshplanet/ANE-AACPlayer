@@ -139,4 +139,17 @@ public class BaseFunction implements FREFunction
 			return null;
 		}
 	}
+
+	protected FREObject getFREObjectFromDouble(float value)
+	{
+		try
+		{
+			return FREObject.newObject(value);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

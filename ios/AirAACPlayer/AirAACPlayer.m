@@ -39,37 +39,62 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_play)
 {
     double startTime = FPANE_FREObjectToDouble(argv[0]);
     AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
-    if (startTime > 0) playerManager.player.currentTime = startTime;
-    [playerManager.player play];
+    if (playerManager && playerManager.player)
+    {
+        if (startTime > 0)
+        {
+            playerManager.player.currentTime = startTime;
+        }
+        [playerManager.player play];
+    }
     return NULL;
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_pause)
 {
     AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
-    [playerManager.player pause];
+    if (playerManager && playerManager.player)
+    {
+        [playerManager.player pause];
+    }
     return NULL;
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_stop)
 {
     AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
-    [playerManager.player stop];
-    playerManager.player.currentTime = 0;
+    if (playerManager && playerManager.player)
+    {
+        [playerManager.player stop];
+        [playerManager.player setCurrentTime:0];
+    }
     return NULL;
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_getDuration)
 {
     AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
-    return FPANE_IntToFREObject(1000*playerManager.player.duration);
+    return FPANE_IntToFREObject(playerManager && playerManager.player ? 1000*playerManager.player.duration : 0);
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_getProgress)
 {
     AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
-    double progress = playerManager.player.isPlaying ? playerManager.player.currentTime : playerManager.player.duration;
-    return FPANE_IntToFREObject(1000*progress);
+    if (playerManager && playerManager.player)
+    {
+        double progress = playerManager.player.isPlaying ? playerManager.player.currentTime : playerManager.player.duration;
+        return FPANE_IntToFREObject(1000*progress);
+    } else
+    {
+        return FPANE_IntToFREObject(0);
+    }
+}
+
+DEFINE_ANE_FUNCTION(AirAACPlayer_getDownload)
+{
+    AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    int download = playerManager ? playerManager.download : 0;
+    return FPANE_DoubleToFREObject(download);
 }
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_setVolume)
@@ -78,7 +103,10 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_setVolume)
     volume = volume < 0 ? 0 : volume;
     volume = volume > 1 ? 1 : volume;
     AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
-    playerManager.player.volume = volume;
+    if (playerManager && playerManager.player)
+    {
+        playerManager.player.volume = volume;
+    }
     return NULL;
 }
 
@@ -92,6 +120,7 @@ void AirAACPlayerContextInitializer(void* extData, const uint8_t* ctxType, FRECo
         MAP_FUNCTION(AirAACPlayer_stop, NULL),
         MAP_FUNCTION(AirAACPlayer_getDuration, NULL),
         MAP_FUNCTION(AirAACPlayer_getProgress, NULL),
+        MAP_FUNCTION(AirAACPlayer_getDownload, NULL),
         MAP_FUNCTION(AirAACPlayer_setVolume, NULL)
     };
     *numFunctionsToTest = sizeof(functions) / sizeof(FRENamedFunction);
