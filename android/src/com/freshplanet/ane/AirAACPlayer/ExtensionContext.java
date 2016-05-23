@@ -58,7 +58,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 	private MediaCodecAudioTrackRenderer _renderer;
 	private ExtractorSampleSource _sampleSource;
 	private DataSource _dataSource;
-    private int _download;
+    private int _download = 0;
 	private FileLoader _loader;
 	private byte[] _loadedData;
 	private String _url = "<no url assigned>";
@@ -116,13 +116,19 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 
 		@Override
 		protected byte[] doInBackground(String... params) {
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024 * 32);
+			ByteArrayOutputStream outputStream;
 
 			try {
 				connection = (HttpURLConnection) new URL(params[0]).openConnection();
 				connection.setReadTimeout(10000);
 				connection.connect();
 				int bytesTotal = connection.getContentLength();
+				if(bytesTotal == 0) {
+					error = new Exception("Downloaded file had 0 bytes");
+					return null;
+				}
+
+				outputStream = new ByteArrayOutputStream(bytesTotal);
 				int bytesLoaded = 0;
 				InputStream stream = connection.getInputStream();
 
