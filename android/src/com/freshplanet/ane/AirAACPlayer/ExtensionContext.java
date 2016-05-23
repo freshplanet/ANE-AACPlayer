@@ -52,8 +52,8 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 		MediaCodecAudioTrackRenderer.EventListener
 {
 	public static final String TAG = "AirAACPlayer.Context";
-	public static final int BUFFER_SEGMENT_SIZE = 32 * 1024;
-	public static final int BUFFER_SEGMENT_COUNT = 128;
+	public static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
+	public static final int BUFFER_SEGMENT_COUNT = 256;
     private ExoPlayer _player;
 	private MediaCodecAudioTrackRenderer _renderer;
 	private ExtractorSampleSource _sampleSource;
@@ -175,7 +175,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 		@Override
 		public FREObject call(FREContext freContext, FREObject[] freObjects) {
 			if(_player == null && _loadedData != null) {
-				_player = ExoPlayer.Factory.newInstance(1, 250, 5000);
+				_player = ExoPlayer.Factory.newInstance(1, 10000, 15000);
 				_player.addListener(ExtensionContext.this);
 				Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
 				_dataSource = new ByteArrayDataSource(_loadedData);
