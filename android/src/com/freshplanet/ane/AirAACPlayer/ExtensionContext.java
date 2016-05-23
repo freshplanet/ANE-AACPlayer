@@ -173,6 +173,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 	private void onLoaded(byte[] bytes)
 	{
 		_loadedData = bytes;
+		_loader = null;
 		dispatchStatusEventAsync("AAC_PLAYER_LOADED", "OK");
 	}
 
@@ -189,6 +190,9 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 						BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE);
 				_renderer = new MediaCodecAudioTrackRenderer(_sampleSource, MediaCodecSelector.DEFAULT);
 				_player.prepare(_renderer);
+			} else if (_loadedData == null) {
+				Log.d(TAG, "ExoPlayer error");
+				dispatchStatusEventAsync("AAC_PLAYER_ERROR", "ExoPlayer error");
 			}
 			return null;
 		}
