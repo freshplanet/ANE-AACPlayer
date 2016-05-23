@@ -186,7 +186,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 				Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
 				_dataSource = new ByteArrayDataSource(_loadedData);
 				_sampleSource = new ExtractorSampleSource(Uri.parse(_url), _dataSource, allocator,
-						BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE, new Mp4Extractor(), new FragmentedMp4Extractor(), new AdtsExtractor());
+						BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE);
 				_renderer = new MediaCodecAudioTrackRenderer(_sampleSource, MediaCodecSelector.DEFAULT);
 				_player.prepare(_renderer);
 			}
