@@ -162,6 +162,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 			} else {
 				onLoaded(bytes);
 			}
+
 		}
 
 		@Override
@@ -205,7 +206,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 		} else {
 			_download = 0;
 		}
-		dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "" + _download);
+		dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", String.valueOf(_download));
 	}
     
     public void play(int position)
@@ -296,7 +297,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 
 	@Override
 	public void onPlayerError(ExoPlaybackException e) {
-		dispatchStatusEventAsync("AAC_PLAYER_ERROR", "" + e.getMessage());
+		onError(e);
 	}
 
 	@Override
@@ -311,7 +312,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 
 	@Override
 	public void onAudioTrackUnderrun(int i, long l, long l1) {
-
+		Log.w(TAG, "Buffer underrun");
 	}
 
 	@Override
