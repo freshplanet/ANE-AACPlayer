@@ -277,7 +277,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 		_player.sendMessage(_renderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME, volume);
 	}
     
-    public void onError(Exception e)
+    public void onError(Throwable e)
     {
     	dispatchStatusEventAsync("AAC_PLAYER_ERROR", "" + e.getMessage());
 		Log.e(TAG, _url, e);
@@ -302,11 +302,13 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 
 	@Override
 	public void onAudioTrackInitializationError(AudioTrack.InitializationException e) {
+		Log.w(TAG, "onAudioTrackInitializationError");
 		onError(e);
 	}
 
 	@Override
 	public void onAudioTrackWriteError(AudioTrack.WriteException e) {
+		Log.w(TAG, "onAudioTrackWriteError");
 		onError(e);
 	}
 
@@ -317,11 +319,13 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 
 	@Override
 	public void onDecoderInitializationError(MediaCodecTrackRenderer.DecoderInitializationException e) {
+		Log.w(TAG, "onDecoderInitializationError");
 		onError(e);
 	}
 
 	@Override
 	public void onCryptoError(MediaCodec.CryptoException e) {
+		Log.w(TAG, "onCryptoError");
 		onError(e);
 	}
 
