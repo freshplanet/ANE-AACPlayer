@@ -120,7 +120,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 
 			try {
 				connection = (HttpURLConnection) new URL(params[0]).openConnection();
-				connection.setReadTimeout(10000);
+				connection.setReadTimeout(20000);
 				connection.connect();
 				int bytesTotal = connection.getContentLength();
 				if(bytesTotal == 0) {
@@ -183,7 +183,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 		@Override
 		public FREObject call(FREContext freContext, FREObject[] freObjects) {
 			if(_player == null && _loadedData != null) {
-				_player = ExoPlayer.Factory.newInstance(1, 10000, 15000);
+				_player = ExoPlayer.Factory.newInstance(1, 500, 2500);
 				_player.addListener(ExtensionContext.this);
 				Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
 				_dataSource = new ByteArrayDataSource(_loadedData);
