@@ -4,10 +4,14 @@
     <!-- Config -->
     <property file="build.config"/>
 
+    <target name="clean">
+        <delete dir="temp"/>
+    </target>
+
     <!-- All -->
     <target name="all" depends="ios,android,swc,package" description="Full build of extension"/>
     <target name="all-android-debug" 
-        depends="android-debug,ios,swc,package" 
+        depends="clean,android-debug,ios,swc,package" 
         description="Full build of extension w/debugging on Android"
     />
 
