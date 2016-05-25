@@ -206,7 +206,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 		} else {
 			_download = 0;
 		}
-		dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", String.valueOf(_download));
+		dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "");
 	}
     
     public void play(int position)
