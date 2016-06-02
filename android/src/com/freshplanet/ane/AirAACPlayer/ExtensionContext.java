@@ -49,7 +49,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 {
 	public static final String TAG = "AirAACPlayer.Context";
 	public static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
-	public static final int BUFFER_SEGMENT_COUNT = 256;
+	public static final int BUFFER_SEGMENT_COUNT = 64;
     private ExoPlayer _player;
 	private MediaCodecAudioTrackRenderer _renderer;
 	private ExtractorSampleSource _sampleSource;
