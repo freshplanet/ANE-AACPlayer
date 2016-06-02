@@ -123,7 +123,7 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 				connection.setReadTimeout(20000);
 				connection.connect();
 				int bytesTotal = connection.getContentLength();
-				if(bytesTotal == 0) {
+				if(bytesTotal < 1) {
 					error = new Exception("Downloaded file had 0 bytes");
 					return null;
 				}
@@ -150,8 +150,11 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 			} catch (IOException e) {
 				error = e;
 				return null;
+			} catch (IllegalArgumentException e) {
+				//this can happen instantiating the ByteArrayOutputStream??
+				error = e;
+				return null;
 			}
-
 			return outputStream.toByteArray();
 		}
 
