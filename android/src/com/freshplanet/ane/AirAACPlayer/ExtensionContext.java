@@ -198,14 +198,18 @@ public class ExtensionContext extends FREContext implements ExoPlayer.Listener,
 		}
 	}
 
-	private void onProgress(int bytesLoaded, int bytesTotal)
+	private void onProgress(Integer bytesLoaded, Integer bytesTotal)
 	{
 		if(bytesTotal > 0) {
 			_download = Math.max(0, Math.min(100, (int) ((float)bytesLoaded / (float) bytesTotal * 100)) );
 		} else {
 			_download = 0;
 		}
-		dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "");
+		try {
+			dispatchStatusEventAsync("AAC_PLAYER_DOWNLOAD", "");
+		} catch (IllegalArgumentException e) {
+			// Getting this here for some reason?
+		}
 	}
     
     public void play(int position)
