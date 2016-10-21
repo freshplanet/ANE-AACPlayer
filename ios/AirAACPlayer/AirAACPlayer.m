@@ -52,9 +52,11 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_play)
             [mydata appendData: (__bridge NSData *) argv[1]];
            
             [playerManager setCustomData:mydata];
+            NSLog(@"PZ SETCUSTOMDATA step1");
         }
         
         [playerManager.player play];
+        NSLog(@"PZ SETCUSTOMDATA step3");
     }
     return NULL;
 }
