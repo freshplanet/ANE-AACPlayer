@@ -16,5 +16,6 @@
 
 - (instancetype)initWithContext:(FREContext)context;
 - (void)loadURL:(NSURL *)url;
+- (void)setCustomData:(NSMutableData *)customData;
 
 @end

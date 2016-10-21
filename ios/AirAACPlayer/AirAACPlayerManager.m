@@ -58,6 +58,16 @@
     }
 }
 
+
+- (void)setCustomData:(NSMutableData *)customData
+{
+    NSError *error;
+    self.player = [[AVAudioPlayer alloc] initWithData:customData error:&error];
+    [self handlePlayerEventDispatch:error];
+}
+
+
+
 - (void)handlePlayerEventDispatch:(NSError*)error
 {
     if (self.player)

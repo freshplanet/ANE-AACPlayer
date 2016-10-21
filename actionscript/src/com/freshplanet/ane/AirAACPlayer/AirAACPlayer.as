@@ -165,11 +165,11 @@ package com.freshplanet.ane.AirAACPlayer
 		 * 
 		 * @param startTime:int the start time in milliseconds
 		 */
-		public function play(startTime:int = 0):void
+		public function play(startTime:int = 0, data:Object=null):void
 		{
 			if (!isSupported || state != STATE_READY) return;
 			startTime = Math.max(0, Math.min(duration, startTime));
-			_context.call("AirAACPlayer_play", startTime);
+			_context.call("AirAACPlayer_play", startTime, data);
 		}
 		
 		/** Pause the playback */

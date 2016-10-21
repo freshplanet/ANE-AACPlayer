@@ -45,6 +45,15 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_play)
         {
             playerManager.player.currentTime = startTime;
         }
+        
+        if(argv[1])
+        {
+            NSMutableData *mydata = [NSMutableData data];
+            [mydata appendData: (__bridge NSData *) argv[1]];
+           
+            [playerManager setCustomData:mydata];
+        }
+        
         [playerManager.player play];
     }
     return NULL;
