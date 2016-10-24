@@ -38,28 +38,106 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_load)
 DEFINE_ANE_FUNCTION(AirAACPlayer_play)
 {
     double startTime = FPANE_FREObjectToDouble(argv[0]);
+    
+    //NSInteger tempUseBA = FPANE_FREObjectToInt(argv[1]);
+    
+    /*
+    FREObject useBA = argv[1];
+    uint32_t useBAValue;
+    FREGetObjectAsBool(useBA, &useBAValue);
+    BOOL usingBA = (useBAValue != 0);*/
+    
+    //BOOL useByteArray = FPANE_FREObjectToBool(argv[1]);
+    
+    NSLog(@"-------------------- ??? alors alors --------------------");
+    double tempUseBA = FPANE_FREObjectToDouble(argv[1]);
+    
+    
+    NSLog(@"-------------------- useByteArray? %f --------------------", tempUseBA);
+    
+    
+    FREByteArray byteArray;
+    
     AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
+    
+    if(tempUseBA!=0)
+    {
+        NSLog(@"-------------------- AVANT ACQUI HOHO --------------------");
+        
+        FREObject objectBA = argv[2];
+        
+        FREAcquireByteArray(objectBA, &byteArray);
+        
+        //FREByteArray byteArray;
+        //FREAcquireByteArray(argv[1], &byteArray);
+        
+        NSLog(@"-------------------- APRES ACQUI HOHO -------------------- length = %d", byteArray.length);
+        
+        if (playerManager)
+        {
+            NSLog(@"-------------------- AVANT --------------------");
+            
+            NSMutableData *mydata = [NSMutableData dataWithBytes:byteArray.bytes length:byteArray.length];
+            NSLog(@"%@", mydata);
+            
+            NSLog(@"-------------------- APRES 1 --------------------");
+            
+            
+            [playerManager setCustomData:mydata];
+            
+            NSLog(@"-------------------- APRES 2 --------------------");
+        }
+        
+        
+    }
+    
+    
+    
+    /*
+    uint32_t string1Length;
+    const uint8_t *string1;
+    FREGetObjectAsUTF8(argv[1], &string1Length, &string1);
+     */
+    
+    //NSLog(@"PZ PASSED step0 : %s", string1);
+    
+    
+    
+    NSLog(@"-------------------- step A --------------------");
+    
     if (playerManager && playerManager.player)
     {
+        NSLog(@"-------------------- step B --------------------");
+        
         if (startTime > 0)
         {
+            NSLog(@"-------------------- step C --------------------");
             playerManager.player.currentTime = startTime;
         }
         
-        if(argv[1])
-        {
+        
+        //if(byteArray)
+        //{
+            /*
             NSMutableData *mydata = [NSMutableData data];
             [mydata appendData: (__bridge NSData *) argv[1]];
            
-            [playerManager setCustomData:mydata];
-            NSLog(@"PZ SETCUSTOMDATA step1");
-        }
+            [playerManager setCustomData:mydata];*/
+            
+            //NSLog(myArg2);
+            
+            //NSLog(@"PZ SETCUSTOMDATA step1");
+        //}
         
         [playerManager.player play];
         NSLog(@"PZ SETCUSTOMDATA step3");
     }
     return NULL;
 }
+
+
+
+
 
 DEFINE_ANE_FUNCTION(AirAACPlayer_pause)
 {

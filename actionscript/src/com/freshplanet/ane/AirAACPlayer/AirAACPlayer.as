@@ -24,6 +24,7 @@ package com.freshplanet.ane.AirAACPlayer
     import flash.events.StatusEvent;
     import flash.external.ExtensionContext;
     import flash.system.Capabilities;
+    import flash.utils.ByteArray;
 
     public class AirAACPlayer extends EventDispatcher
     {
@@ -165,11 +166,15 @@ package com.freshplanet.ane.AirAACPlayer
 		 * 
 		 * @param startTime:int the start time in milliseconds
 		 */
-		public function play(startTime:int = 0, data:Object=null):void
+		public function play(startTime:int = 0, usingByteArray:int=0, myByteArray:ByteArray=null):void
 		{
-			if (!isSupported || state != STATE_READY) return;
+			trace("---------> PZ BYTEARRAY edited");
+
+			//if(usingByteArray!=0)
+			if ((!isSupported || state != STATE_READY) && usingByteArray==0) return;
+
 			startTime = Math.max(0, Math.min(duration, startTime));
-			_context.call("AirAACPlayer_play", startTime, data);
+			_context.call("AirAACPlayer_play", startTime, usingByteArray, myByteArray);
 		}
 		
 		/** Pause the playback */
