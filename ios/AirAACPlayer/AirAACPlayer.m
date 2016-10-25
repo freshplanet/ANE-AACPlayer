@@ -49,7 +49,7 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_play)
         FREAcquireByteArray(objectBA, &byteArray);
         NSMutableData *mydata = [NSMutableData dataWithBytes:byteArray.bytes length:byteArray.length];
         [playerManager setCustomData:mydata];
-        FREReleaseByteArray(objectBA);        
+        FREReleaseByteArray(objectBA);
     }
     
     if (playerManager && playerManager.player)
