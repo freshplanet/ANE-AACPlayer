@@ -168,9 +168,6 @@ package com.freshplanet.ane.AirAACPlayer
 		 */
 		public function play(startTime:int = 0, myByteArray:ByteArray=null):void
 		{
-			trace("---------> PZ BYTEARRAY edited");
-
-			//if(usingByteArray!=0)
 			if ((!isSupported || state != STATE_READY) && myByteArray==null) return;
 
 			startTime = Math.max(0, Math.min(duration, startTime));

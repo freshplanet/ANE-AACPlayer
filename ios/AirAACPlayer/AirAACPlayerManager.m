@@ -63,7 +63,6 @@
 {
     NSError *error;
     self.player = [[AVAudioPlayer alloc] initWithData:customData error:&error];
-    NSLog(@"PZ SETCUSTOMDATA step2");
     [self handlePlayerEventDispatch:error];
 }
 
