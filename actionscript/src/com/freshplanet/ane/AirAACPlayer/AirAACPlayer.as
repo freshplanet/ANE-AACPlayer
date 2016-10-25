@@ -166,15 +166,15 @@ package com.freshplanet.ane.AirAACPlayer
 		 * 
 		 * @param startTime:int the start time in milliseconds
 		 */
-		public function play(startTime:int = 0, usingByteArray:int=0, myByteArray:ByteArray=null):void
+		public function play(startTime:int = 0, myByteArray:ByteArray=null):void
 		{
 			trace("---------> PZ BYTEARRAY edited");
 
 			//if(usingByteArray!=0)
-			if ((!isSupported || state != STATE_READY) && usingByteArray==0) return;
+			if ((!isSupported || state != STATE_READY) && myByteArray==null) return;
 
 			startTime = Math.max(0, Math.min(duration, startTime));
-			_context.call("AirAACPlayer_play", startTime, usingByteArray, myByteArray);
+			_context.call("AirAACPlayer_play", startTime, myByteArray);
 		}
 		
 		/** Pause the playback */

@@ -48,23 +48,25 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_play)
     BOOL usingBA = (useBAValue != 0);*/
     
     //BOOL useByteArray = FPANE_FREObjectToBool(argv[1]);
-    
+    /*
     NSLog(@"-------------------- ??? alors alors --------------------");
     double tempUseBA = FPANE_FREObjectToDouble(argv[1]);
     
     
     NSLog(@"-------------------- useByteArray? %f --------------------", tempUseBA);
-    
+    */
     
     FREByteArray byteArray;
     
     AirAACPlayerManager *playerManager = getPlayerManagerFromContext(context);
     
-    if(tempUseBA!=0)
+    FREObject objectBA = argv[1];
+    
+    if(objectBA)
     {
         NSLog(@"-------------------- AVANT ACQUI HOHO --------------------");
         
-        FREObject objectBA = argv[2];
+        //FREObject objectBA = argv[1];
         
         FREAcquireByteArray(objectBA, &byteArray);
         
