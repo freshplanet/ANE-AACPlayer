@@ -101,8 +101,6 @@ package com.freshplanet.ane.AirAACPlayer
 		/** AirAACPlayer is supported on iOS and Android devices. */
 		public static function get isSupported():Boolean
 		{
-			//var iOS:Boolean = (Capabilities.manufacturer.indexOf("iOS") != -1);
-			//var isAndroid:Boolean = (Capabilities.manufacturer.indexOf("Android") != -1);
 			return isIOS() || isAndroid();
 		}
 		
