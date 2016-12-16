@@ -16,7 +16,7 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////-->
 
-<extension xmlns="http://ns.adobe.com/air/extension/17.0">
+<extension xmlns="http://ns.adobe.com/air/extension/20.0">
   <id>com.freshplanet.AirAACPlayer</id>
   <versionNumber>2</versionNumber>
   <platforms>

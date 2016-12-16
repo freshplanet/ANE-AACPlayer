@@ -4,10 +4,14 @@
     <!-- Config -->
     <property file="build.config"/>
 
+    <target name="clean">
+        <delete dir="temp"/>
+    </target>
+
     <!-- All -->
     <target name="all" depends="ios,android,swc,package" description="Full build of extension"/>
     <target name="all-android-debug" 
-        depends="android-debug,ios,swc,package" 
+        depends="clean,android-debug,ios,swc,package" 
         description="Full build of extension w/debugging on Android"
     />
 
@@ -61,6 +65,7 @@
             <classpath>
                 <pathelement location="${android.platform.home}/android.jar"/>
                 <pathelement location="${air.sdk.home}/lib/android/FlashRuntimeExtensions.jar"/>
+                <pathelement location="../android/libs/exoplayer-r1.5.6.jar"/>
             </classpath>
         </javac>
 
@@ -92,7 +97,7 @@
             <env key="AIR_SDK_HOME" value="${air.sdk.home}"/>
             <arg line='-source-path ../actionscript/src'/>
             <arg line='-output temp/swc/${name}.swc'/>
-            <arg line='-swf-version=25'/>
+            <arg line='-swf-version=28'/>
             <arg line='-external-library-path+="${air.sdk.home}/frameworks/libs/air/airglobal.swc"'/>
             <arg line='-include-classes ${classlist}'/>
         </exec>

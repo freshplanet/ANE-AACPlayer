@@ -32,13 +32,17 @@ package com.freshplanet.ane.AirAACPlayer
 		
 		public static const STATE_INIT:String = "init";
 		public static const STATE_LOADING:String = "loading";
+		public static const STATE_LOADED:String = "loaded";
 		public static const STATE_READY:String = "ready";
 		public static const STATE_ERROR:String = "error";
 		public static const STATE_DISPOSED:String = "disposed";
-        
+
+		//The LOADED state is optional, it can be skipped (iOS)
+		public static const AAC_PLAYER_LOADED:String = "AAC_PLAYER_LOADED";
         public static const AAC_PLAYER_PREPARED:String = "AAC_PLAYER_PREPARED";
         public static const AAC_PLAYER_ERROR:String = "AAC_PLAYER_ERROR";
         public static const AAC_PLAYER_DOWNLOAD:String = "AAC_PLAYER_DOWNLOAD";
+
 		
 		private static const EXTENSION_ID:String = "com.freshplanet.AirAACPlayer";
 		
@@ -146,6 +150,14 @@ package com.freshplanet.ane.AirAACPlayer
 			_state = STATE_LOADING;
 			_context.call("AirAACPlayer_load", _url);
 		}
+
+		//This is only called on Android
+		public function prepare():void
+		{
+			if (!isSupported ||  state != STATE_LOADED) return;
+			_state = STATE_LOADING;
+			_context.call("AirAACPlayer_prepare");
+		}
 		
 		/**
 		 * Start playing the stream.
@@ -191,6 +203,11 @@ package com.freshplanet.ane.AirAACPlayer
             {
                 log(event.level);
             }
+			else if (event.code == AAC_PLAYER_LOADED) // only on Android
+			{
+				_state = STATE_LOADED;
+				dispatchEvent(new Event(event.code));
+			}
             else if (event.code == AAC_PLAYER_PREPARED)
             { 
 				_state = STATE_READY;
