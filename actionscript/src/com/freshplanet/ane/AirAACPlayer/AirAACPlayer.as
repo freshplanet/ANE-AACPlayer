@@ -42,6 +42,7 @@ package com.freshplanet.ane.AirAACPlayer
         public static const AAC_PLAYER_PREPARED:String = "AAC_PLAYER_PREPARED";
         public static const AAC_PLAYER_ERROR:String = "AAC_PLAYER_ERROR";
         public static const AAC_PLAYER_DOWNLOAD:String = "AAC_PLAYER_DOWNLOAD";
+        public static const AAC_PLAYER_PLAYBACK_FINISHED:String = "AAC_PLAYER_PLAYBACK_FINISHED";
 
 		
 		private static const EXTENSION_ID:String = "com.freshplanet.AirAACPlayer";
@@ -218,7 +219,7 @@ package com.freshplanet.ane.AirAACPlayer
 				_state = STATE_ERROR;
                 dispatchEvent(new ErrorEvent(event.code, false, false, event.level));
             }
-            else if (event.code == AAC_PLAYER_DOWNLOAD)
+            else
             {
                 dispatchEvent(new Event(event.code));
             }

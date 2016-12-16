@@ -46,6 +46,9 @@
         
         NSError *error;
         self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+        if(error == nil) {
+            [self.player setDelegate:self];
+        }
         [self handlePlayerEventDispatch:error];
     }
     else
@@ -56,6 +59,17 @@
         self.size = 0;
         [self.connection start];
     }
+}
+
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player
+                       successfully:(BOOL)flag
+{
+    FPANE_DispatchEventWithInfo(self.context, @"AAC_PLAYER_PLAYBACK_FINISHED", @"OK");
+}
+- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player
+                                 error:(NSError *)error
+{
+    [self handlePlayerEventDispatch:error];
 }
 
 - (void)handlePlayerEventDispatch:(NSError*)error
