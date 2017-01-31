@@ -1,5 +1,5 @@
 <platform xmlns="http://ns.adobe.com/air/extension/20.0">
-    <sdkVersion>7</sdkVersion>
+    <sdkVersion>8</sdkVersion>
     <linkerOptions>
     </linkerOptions> 
 </platform>

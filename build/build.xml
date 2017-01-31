@@ -4,22 +4,14 @@
     <!-- Config -->
     <property file="build.config"/>
 
-    <target name="clean">
-        <delete dir="temp"/>
-    </target>
-
     <!-- All -->
     <target name="all" depends="ios,android,swc,package" description="Full build of extension"/>
-    <target name="all-android-debug" 
-        depends="clean,android-debug,ios,swc,package" 
-        description="Full build of extension w/debugging on Android"
-    />
 
     <!-- iOS -->
     <target name="ios" description="Build iOS Library">
 
         <!-- make the build directory for the objc code -->
-        <mkdir dir="temp/ios/build/"/>
+        <mkdir dir="temp/ios/"/>
 
         <!-- clean the build -->
         <exec executable="xcodebuild" failonerror="true" dir="../ios/">
@@ -44,15 +36,7 @@
     </target>
 
     <!-- Android -->
-    <target name="android" description="Build Android Library with debugging disabled">
-        <property name="ANDROID_DEBUG" value="false"/>
-        <antcall target="android-build"/>
-    </target>
-    <target name="android-debug" description="Build Android Library with debugging enabled">
-        <property name="ANDROID_DEBUG" value="true"/>
-        <antcall target="android-build"/>
-    </target>
-    <target name="android-build" description="Build Android Library">
+    <target name="android" description="Build Android Library">
 
         <property name="android.platform.home" value="${android.sdk.home}/platforms/android-${android.platform}"/>
 
@@ -97,7 +81,7 @@
             <env key="AIR_SDK_HOME" value="${air.sdk.home}"/>
             <arg line='-source-path ../actionscript/src'/>
             <arg line='-output temp/swc/${name}.swc'/>
-            <arg line='-swf-version=28'/>
+            <arg line='-swf-version=29'/>
             <arg line='-external-library-path+="${air.sdk.home}/frameworks/libs/air/airglobal.swc"'/>
             <arg line='-include-classes ${classlist}'/>
         </exec>
