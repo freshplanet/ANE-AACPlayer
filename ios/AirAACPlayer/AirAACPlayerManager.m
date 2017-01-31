@@ -7,7 +7,6 @@
 //
 
 #import "AirAACPlayerManager.h"
-#import "FPANEUtils.h"
 
 @interface AirAACPlayerManager ()
 
@@ -46,9 +45,10 @@
         
         NSError *error;
         self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
-        if(error == nil) {
+        
+        if (error == nil)
             [self.player setDelegate:self];
-        }
+        
         [self handlePlayerEventDispatch:error];
     }
     else
@@ -65,11 +65,13 @@
                        successfully:(BOOL)flag
 {
     FPANE_DispatchEventWithInfo(self.context, @"AAC_PLAYER_PLAYBACK_FINISHED", @"OK");
+    [self.player setDelegate:nil];
 }
 - (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player
                                  error:(NSError *)error
 {
     [self handlePlayerEventDispatch:error];
+    [self.player setDelegate:nil];
 }
 
 - (void)handlePlayerEventDispatch:(NSError*)error
