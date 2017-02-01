@@ -35,8 +35,10 @@
 
 - (void)dealloc
 {
+   // NSLog(@"[AirAACPlayerManager dealloc]");
     [self.connection cancel];
     [self.player stop];
+    [self.player setDelegate:nil];
 }
 
 - (void)loadURL:(NSURL *)url
