@@ -1,3 +1,8 @@
-<platform xmlns="http://ns.adobe.com/air/extension/20.0">
+<platform xmlns="http://ns.adobe.com/air/extension/22.0">
+    <packagedDependencies>
+    
+        <!-- support -->
+        <packagedDependency>exoplayer-r1.5.6.jar</packagedDependency>
 
+    </packagedDependencies> 
 </platform>
