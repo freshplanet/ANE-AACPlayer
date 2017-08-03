@@ -22,12 +22,7 @@ Usage
 
 A sample application is provided in the `sample` folder to help you get familiar with this ANE.
 
-In order to run the sample application, you need to create a JSON file to provide some m4a URLs:
 
-```bash
-cd /path/to/the/ane/sample/src
-echo '["http://domain.com/file1.m4a", "http://domain.com/file2.m4a"]' > m4a_urls.json
-```
 
 Notes:
 * included binary has been compiled for 64-bit iOS support
@@ -50,6 +45,6 @@ Authors
 -------
 
 This ANE has been written by [Corentin Smith](http://csmith.fr), [Kevin Lockard](https://github.com/kevinfreshplanet),
-[Jay Canty](https://github.com/jaycanty) and [Alexis Taugeron](http://alexistaugeron.com). 
+[Jay Canty](https://github.com/jaycanty), [Alexis Taugeron](http://alexistaugeron.com) and [Mateo Kozomara](mateo.kozomara@gmail.com). 
 It belongs to [FreshPlanet Inc.](http://freshplanet.com) and is distributed under the 
 [Apache Licence, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).

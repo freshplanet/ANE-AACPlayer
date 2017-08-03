@@ -16,8 +16,8 @@
 //  
 //////////////////////////////////////////////////////////////////////////////////////-->
 
-<extension xmlns="http://ns.adobe.com/air/extension/20.0">
-  <id>com.freshplanet.AirAACPlayer</id>
+<extension xmlns="http://ns.adobe.com/air/extension/22.0">
+  <id>com.freshplanet.ane.AirAACPlayer</id>
   <versionNumber>2</versionNumber>
   <platforms>
     <platform name="iPhone-ARM">
@@ -31,8 +31,8 @@
     <platform name="Android-ARM"> 
       <applicationDeployment> 
         <nativeLibrary>libAirAACPlayer.jar</nativeLibrary> 
-        <initializer>com.freshplanet.ane.AirAACPlayer.Extension</initializer> 
-        <finalizer>com.freshplanet.ane.AirAACPlayer.Extension</finalizer> 
+        <initializer>com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension</initializer>
+        <finalizer>com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension</finalizer>
       </applicationDeployment>
     </platform>
     

@@ -32,3 +32,10 @@ Thumbs.db
 # Intellij
 .idea
 *.iml
+android/lib/build/
+
+android/\.gradle/
+
+android/local\.properties
+
+ios/build/
