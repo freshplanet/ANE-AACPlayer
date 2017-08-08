@@ -52,11 +52,15 @@
     if ([url isFileURL]) {
         
         NSError *error;
+        
         self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
         
         if (error != nil) {
             [self sendEvent:kAirAACPlayerEvent_AAC_PLAYER_ERROR level:error.localizedDescription];
+            return;
         }
+        
+        [self sendEvent:kAirAACPlayerEvent_AAC_PLAYER_PREPARED];
         
     }
     else

@@ -26,10 +26,12 @@ public class GetDurationFunction extends BaseFunction {
 	public FREObject call(FREContext context, FREObject[] args) {
 		super.call(context, args);
 
-		if(AirAACPlayerExtensionContext.player == null)
+		AirAACPlayerExtensionContext playerContext = (AirAACPlayerExtensionContext) context;
+
+		if(playerContext.get_player() == null)
 			return getFREObjectFromInt(0);
 
-		return getFREObjectFromInt((int) AirAACPlayerExtensionContext.player.getDuration());
+		return getFREObjectFromInt((int) playerContext.get_player().getDuration());
 	}
 
 
