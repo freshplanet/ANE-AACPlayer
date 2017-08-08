@@ -19,14 +19,12 @@ import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
 
 public class AirAACPlayerExtension implements FREExtension {
-	public static AirAACPlayerExtensionContext context;
 
 	public FREContext createContext(String extId) {
-		return context = new AirAACPlayerExtensionContext();
+		return new AirAACPlayerExtensionContext();
 	}
 
 	public void dispose() {
-		context = null;
 	}
 	
 	public void initialize() {}
