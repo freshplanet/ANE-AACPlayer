@@ -28,7 +28,9 @@ public class SetVolumeFunction extends BaseFunction {
 	public FREObject call(FREContext context, FREObject[] args) {
 		super.call(context, args);
 
-		if (AirAACPlayerExtensionContext.player == null) {
+		AirAACPlayerExtensionContext playerContext = (AirAACPlayerExtensionContext) context;
+
+		if (playerContext.get_player() == null) {
 			return null;
 		}
 
@@ -36,7 +38,7 @@ public class SetVolumeFunction extends BaseFunction {
 
 		volume = volume < 0 ? 0 : volume;
 		volume = volume > 1 ? 1 : volume;
-		AirAACPlayerExtensionContext.player.sendMessage(AirAACPlayerExtensionContext.renderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME, volume);
+		playerContext.get_player().sendMessage(playerContext.get_renderer(), MediaCodecAudioTrackRenderer.MSG_SET_VOLUME, volume);
 
 		return null;
 	}

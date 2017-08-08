@@ -27,8 +27,6 @@ import com.adobe.fre.FREBitmapData;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
-import com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension;
-import com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtensionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +34,6 @@ import java.util.List;
 public class BaseFunction implements FREFunction {
 	@Override
 	public FREObject call(FREContext context, FREObject[] args) {
-		AirAACPlayerExtension.context = (AirAACPlayerExtensionContext) context;
 		return null;
 	}
 	

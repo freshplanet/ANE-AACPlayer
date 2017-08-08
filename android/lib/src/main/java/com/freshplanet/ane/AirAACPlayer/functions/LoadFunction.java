@@ -15,13 +15,13 @@
 
 package com.freshplanet.ane.AirAACPlayer.functions;
 
-
 import android.net.Uri;
 import android.os.AsyncTask;
+
+import com.google.android.exoplayer.upstream.AssetDataSource;
 import com.google.android.exoplayer.upstream.DataSource;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREObject;
-import com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension;
 import com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtensionContext;
 import com.freshplanet.ane.AirAACPlayer.FileLoader;
 import com.freshplanet.ane.AirAACPlayer.FileLoaderListener;
@@ -39,14 +39,42 @@ import static com.freshplanet.ane.AirAACPlayer.Constants.AirAACPlayerEvent_AAC_P
 public class LoadFunction extends BaseFunction implements FileLoaderListener {
 
 	private String _url;
+	private AirAACPlayerExtensionContext _playerContext;
 
 	@Override
 	public FREObject call(FREContext context, FREObject[] args) {
 		super.call(context, args);
 
+		this._playerContext = (AirAACPlayerExtensionContext) context;
+
 		this._url = getStringFromFREObject(args[0]);
-		FileLoader loader = new FileLoader(this);
-		loader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this._url);
+
+		if(this._url.contains("http://") || this._url.contains("https://")) {
+			FileLoader loader = new FileLoader(this);
+			loader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this._url);
+		}
+		else {
+
+			// local file
+			try {
+
+				this._playerContext.set_player(ExoPlayer.Factory.newInstance(1, 500, 2500));
+				this._playerContext.get_player().addListener(this._playerContext);
+
+				Allocator allocator = new DefaultAllocator(AirAACPlayerExtensionContext.BUFFER_SEGMENT_SIZE);
+
+				DataSource dataSource = new AssetDataSource(context.getActivity().getApplicationContext());
+				ExtractorSampleSource sampleSource = new ExtractorSampleSource(Uri.parse(this._url), dataSource, allocator,
+						AirAACPlayerExtensionContext.BUFFER_SEGMENT_COUNT * AirAACPlayerExtensionContext.BUFFER_SEGMENT_SIZE);
+				MediaCodecAudioTrackRenderer renderer = new MediaCodecAudioTrackRenderer(sampleSource, MediaCodecSelector.DEFAULT);
+				this._playerContext.set_renderer(renderer);
+				this._playerContext.get_player().prepare(renderer);
+
+			}
+			catch (Exception e) {
+				this._playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getLocalizedMessage());
+			}
+		}
 
 		return null;
 
@@ -60,17 +88,18 @@ public class LoadFunction extends BaseFunction implements FileLoaderListener {
 
 	@Override
 	public void onError(Exception e) {
-		AirAACPlayerExtension.context.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
+		this._playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
 
 	}
 
 	@Override
 	public void onLoaded(byte[] bytes) {
-		// prepare
-		if (AirAACPlayerExtensionContext.player == null && bytes != null) {
 
-			AirAACPlayerExtensionContext.player = ExoPlayer.Factory.newInstance(1, 500, 2500);
-			AirAACPlayerExtensionContext.player.addListener(AirAACPlayerExtension.context);
+		// prepare
+		if (this._playerContext.get_player() == null && bytes != null) {
+
+			this._playerContext.set_player(ExoPlayer.Factory.newInstance(1, 500, 2500));
+			this._playerContext.get_player().addListener(this._playerContext);
 
 			Allocator allocator = new DefaultAllocator(AirAACPlayerExtensionContext.BUFFER_SEGMENT_SIZE);
 
@@ -78,14 +107,12 @@ public class LoadFunction extends BaseFunction implements FileLoaderListener {
 			ExtractorSampleSource sampleSource = new ExtractorSampleSource(Uri.parse(this._url), dataSource, allocator,
 					AirAACPlayerExtensionContext.BUFFER_SEGMENT_COUNT * AirAACPlayerExtensionContext.BUFFER_SEGMENT_SIZE);
 			MediaCodecAudioTrackRenderer renderer = new MediaCodecAudioTrackRenderer(sampleSource, MediaCodecSelector.DEFAULT);
-			AirAACPlayerExtensionContext.renderer = renderer;
-			AirAACPlayerExtensionContext.player.prepare(renderer);
+			this._playerContext.set_renderer(renderer);
+			this._playerContext.get_player().prepare(renderer);
 		}
 		else if (bytes == null) {
-			AirAACPlayerExtension.context.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "ExoPlayer error");
+			this._playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "ExoPlayer error");
 		}
-
-
 	}
 
 	@Override
@@ -94,7 +121,7 @@ public class LoadFunction extends BaseFunction implements FileLoaderListener {
 		if (bytesTotal > 0)
 			downloadProgress = Math.max(0, Math.min(100, (int) ((float) bytesLoaded / (float) bytesTotal * 100)));
 
-		AirAACPlayerExtension.context.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_DOWNLOAD, String.valueOf(downloadProgress));
+		this._playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_DOWNLOAD, String.valueOf(downloadProgress));
 
 	}
 }
