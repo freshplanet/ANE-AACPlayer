@@ -16,7 +16,6 @@
 package com.freshplanet.ane.AirAACPlayer;
 
 import android.media.MediaCodec;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.GetDurationFunction;
@@ -49,6 +48,8 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 	private MediaCodecAudioTrackRenderer _renderer;
 
 	private boolean _dispatchedPrepared = false;
+	private FileLoader _fileLoader;
+	private boolean _disposed = false;
 
 	public void set_player(ExoPlayer _player) {
 		this._player = _player;
@@ -56,7 +57,9 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 	public void set_renderer(MediaCodecAudioTrackRenderer _renderer) {
 		this._renderer = _renderer;
 	}
-
+	public void set_fileLoader(FileLoader _fileLoader) {
+		this._fileLoader = _fileLoader;
+	}
 	public ExoPlayer get_player() {
 		return _player;
 	}
@@ -64,15 +67,23 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 	public MediaCodecAudioTrackRenderer get_renderer() {
 		return _renderer;
 	}
+	public boolean is_disposed() {
+		return _disposed;
+	}
 
 	@Override
 	public void dispose() {
-
+		_disposed = true;
+		if(_fileLoader != null) {
+			_fileLoader.cancel(true);
+			_fileLoader = null;
+		}
 		if (_player != null) {
 			_player.stop();
 			_player.release();
 			_player = null;
 		}
+
 		_renderer = null;
 		_dispatchedPrepared = false;
 	}
