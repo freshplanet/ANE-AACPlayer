@@ -18,7 +18,6 @@ package com.freshplanet.ane.AirAACPlayer.functions;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREObject;
-import com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension;
 import com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtensionContext;
 
 import static com.freshplanet.ane.AirAACPlayer.Constants.AirAACPlayerEvent_AAC_PLAYER_ERROR;
@@ -30,16 +29,18 @@ public class PauseFunction extends BaseFunction {
 	public FREObject call(FREContext context, FREObject[] args) {
 		super.call(context, args);
 
-		if (AirAACPlayerExtensionContext.player == null) {
+		AirAACPlayerExtensionContext playerContext = (AirAACPlayerExtensionContext) context;
+
+		if (playerContext.get_player() == null) {
 			return  null;
 		}
 
 		try {
-			if (AirAACPlayerExtensionContext.player.getPlayWhenReady())
-				AirAACPlayerExtensionContext.player.setPlayWhenReady(false);
+			if (playerContext.get_player().getPlayWhenReady())
+				playerContext.get_player().setPlayWhenReady(false);
 		}
 		catch (IllegalStateException e) {
-			AirAACPlayerExtension.context.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
+			playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
 		}
 
 		return null;

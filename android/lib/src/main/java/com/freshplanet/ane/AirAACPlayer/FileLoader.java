@@ -101,7 +101,6 @@ public class FileLoader extends AsyncTask<String, Integer, byte[]> {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-
         listener.onProgress(values[0], values[1]);
     }
 }

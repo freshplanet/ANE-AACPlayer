@@ -15,10 +15,7 @@
 
 package com.freshplanet.ane.AirAACPlayer;
 
-import android.graphics.Bitmap;
 import android.media.MediaCodec;
-import android.util.Log;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.GetDurationFunction;
@@ -47,22 +44,50 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 	public static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
 	public static final int BUFFER_SEGMENT_COUNT = 64;
 
-	public static ExoPlayer player;
-	public static MediaCodecAudioTrackRenderer renderer;
+	private ExoPlayer _player;
+	private MediaCodecAudioTrackRenderer _renderer;
 
-	private boolean dispatchedPrepared = false;
+	private boolean _dispatchedPrepared = false;
+	private FileLoader _fileLoader;
+	private boolean _disposed = false;
+
+	public void set_player(ExoPlayer _player) {
+		this._player = _player;
+	}
+	public void set_renderer(MediaCodecAudioTrackRenderer _renderer) {
+		this._renderer = _renderer;
+	}
+	public void set_fileLoader(FileLoader _fileLoader) {
+		this._fileLoader = _fileLoader;
+	}
+	public ExoPlayer get_player() {
+		return _player;
+	}
+
+	public MediaCodecAudioTrackRenderer get_renderer() {
+		return _renderer;
+	}
+	public boolean is_disposed() {
+		return _disposed;
+	}
 
 	@Override
 	public void dispose() {
-		AirAACPlayerExtension.context = null;
-		if (player != null) {
-			player.stop();
-			player.release();
-			player = null;
+		_disposed = true;
+		if(_fileLoader != null) {
+			_fileLoader.cancel(true);
+			_fileLoader = null;
 		}
-		renderer = null;
-		dispatchedPrepared = false;
+		if (_player != null) {
+			_player.stop();
+			_player.release();
+			_player = null;
+		}
+
+		_renderer = null;
+		_dispatchedPrepared = false;
 	}
+
 
 	@Override
 	public Map<String, FREFunction> getFunctions() {
@@ -88,13 +113,14 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 
 	@Override
 	public void onPlayerStateChanged(boolean var1, int var2) {
-
-		if (AirAACPlayerExtensionContext.player.getPlaybackState() == ExoPlayer.STATE_READY && !dispatchedPrepared) {
-			dispatchedPrepared = true;
+		if (_player.getPlaybackState() == ExoPlayer.STATE_READY && !_dispatchedPrepared) {
+			_dispatchedPrepared = true;
 			dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_PREPARED, "OK");
 		}
-		else if(AirAACPlayerExtensionContext.player.getPlaybackState() == ExoPlayer.STATE_ENDED) {
+		else if(_player.getPlaybackState() == ExoPlayer.STATE_ENDED) {
 			dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_PLAYBACK_FINISHED, "OK");
+
+
 		}
 
 	}
@@ -118,13 +144,13 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 	@Override
 	public void onAudioTrackInitializationError(AudioTrack.InitializationException e) {
 
-		AirAACPlayerExtension.context.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
+		this.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
 	}
 
 	@Override
 	public void onAudioTrackWriteError(AudioTrack.WriteException e) {
 
-		AirAACPlayerExtension.context.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
+		this.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
 	}
 
 	@Override
@@ -140,14 +166,14 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 	@Override
 	public void onDecoderInitializationError(MediaCodecTrackRenderer.DecoderInitializationException e) {
 
-		AirAACPlayerExtension.context.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
+		this.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
 
 	}
 
 	@Override
 	public void onCryptoError(MediaCodec.CryptoException e) {
 
-		AirAACPlayerExtension.context.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
+		this.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
 	}
 
 	@Override
