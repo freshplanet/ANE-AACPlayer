@@ -69,9 +69,8 @@
         
         NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: [NSOperationQueue mainQueue]];
         
-        NSURLSessionDataTask *dataTask = [defaultSession dataTaskWithURL: url];
-        
-        [dataTask resume];
+        _dataTask = [defaultSession dataTaskWithURL: url];
+        [_dataTask resume];
 
     }
 }
@@ -105,7 +104,13 @@
         [self.player setDelegate:nil];
         self.player = nil;
     }
-    
+    if (_dataTask) {
+        [_dataTask cancel];
+    }
+}
+
+- (void)dealloc {
+    [self dispose];
 }
 
 #pragma mark NSURLSessionDataDelegate

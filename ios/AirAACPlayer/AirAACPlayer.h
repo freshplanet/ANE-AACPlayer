@@ -20,6 +20,7 @@
 @interface AirAACPlayer : NSObject <AVAudioPlayerDelegate, NSURLSessionDataDelegate, NSURLSessionDelegate, NSURLSessionTaskDelegate> {
     FREContext _context;
     AVAudioPlayer *_player;
+    NSURLSessionDataTask *_dataTask;
 }
 
 @end
