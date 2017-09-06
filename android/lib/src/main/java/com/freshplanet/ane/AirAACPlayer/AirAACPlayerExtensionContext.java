@@ -18,6 +18,7 @@ package com.freshplanet.ane.AirAACPlayer;
 import android.media.MediaCodec;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.DisposeFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.GetDurationFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.GetProgressFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.LoadFunction;
@@ -100,6 +101,7 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 		functions.put("AirAACPlayer_getDuration", new GetDurationFunction());
 		functions.put("AirAACPlayer_getProgress", new GetProgressFunction());
 		functions.put("AirAACPlayer_setVolume", new SetVolumeFunction());
+		functions.put("AirAACPlayer_dispose", new DisposeFunction());
 
 		return functions;	
 	}

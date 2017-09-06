@@ -77,10 +77,8 @@
 }
 
 - (void) play:(double)startTime {
-    if (self.player)
-    {
-        if (startTime > 0)
-        {
+    if (self.player) {
+        if (startTime > 0) {
             self.player.currentTime = startTime;
         }
         [self.player setDelegate:self];
@@ -89,18 +87,25 @@
 }
 
 - (void) pause {
-    if (self.player)
-    {
+    if (self.player) {
         [self.player pause];
     }
 }
 
 - (void) stop {
-    if (self.player)
-    {
+    if (self.player) {
         [self.player stop];
         [self.player setCurrentTime:0];
     }
+}
+
+- (void) dispose {
+    [self stop];
+    if (self.player) {
+        [self.player setDelegate:nil];
+        self.player = nil;
+    }
+    
 }
 
 #pragma mark NSURLSessionDataDelegate
@@ -288,6 +293,19 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_setVolume) {
     
 }
 
+DEFINE_ANE_FUNCTION(AirAACPlayer_dispose) {
+    
+    AirAACPlayer* controller = GetAirAACPlayerContextNativeData(context);
+    
+    if (!controller)
+        return FPANE_CreateError(@"context's AirAACPlayer is null", 0);
+    
+    [controller dispose];
+    
+    return nil;
+    
+}
+
 #pragma mark - ANE setup
 
 void AirAACPlayerContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx,
@@ -303,7 +321,8 @@ void AirAACPlayerContextInitializer(void* extData, const uint8_t* ctxType, FRECo
         MAP_FUNCTION(AirAACPlayer_stop, NULL),
         MAP_FUNCTION(AirAACPlayer_getDuration, NULL),
         MAP_FUNCTION(AirAACPlayer_getProgress, NULL),
-        MAP_FUNCTION(AirAACPlayer_setVolume, NULL)
+        MAP_FUNCTION(AirAACPlayer_setVolume, NULL),
+        MAP_FUNCTION(AirAACPlayer_dispose, NULL)
     };
     
     *numFunctionsToTest = sizeof(functions) / sizeof(FRENamedFunction);

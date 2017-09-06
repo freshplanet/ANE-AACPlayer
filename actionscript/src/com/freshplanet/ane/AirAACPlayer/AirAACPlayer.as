@@ -80,6 +80,7 @@ package com.freshplanet.ane.AirAACPlayer
 		    if (!isSupported || state == AirAACPlayerState.DISPOSED) return;
 
 		    _state = AirAACPlayerState.DISPOSED;
+            _context.call("AirAACPlayer_dispose");
 		    _context.dispose();
 		    _context = null;
 	    }
