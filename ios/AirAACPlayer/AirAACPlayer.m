@@ -78,7 +78,7 @@
 - (void) play:(double)startTime {
     if (self.player) {
         if (startTime > 0) {
-            self.player.currentTime = startTime;
+            [self.player setCurrentTime:startTime / 1000];
         }
         [self.player setDelegate:self];
         [self.player play];
@@ -263,7 +263,7 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_getProgress) {
         return FPANE_CreateError(@"context's AirAACPlayer is null", 0);
     
     if (controller.player){
-        double progress = controller.player.isPlaying ? controller.player.currentTime : controller.player.duration;
+        double progress = controller.player.currentTime;
         return FPANE_IntToFREObject(1000*progress);
     } else{
         return FPANE_IntToFREObject(0);
