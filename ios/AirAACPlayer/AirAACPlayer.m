@@ -178,11 +178,11 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_load) {
     AirAACPlayer* controller = GetAirAACPlayerContextNativeData(context);
     
     if (!controller)
-        return FPANE_CreateError(@"context's AirAACPlayer is null", 0);
+        return AirAACPlayer_FPANE_CreateError(@"context's AirAACPlayer is null", 0);
     
     @try {
         
-        NSURL *url = [NSURL URLWithString:FPANE_FREObjectToNSString(argv[0])];
+        NSURL *url = [NSURL URLWithString:AirAACPlayer_FPANE_FREObjectToNSString(argv[0])];
         [controller loadURL:url];
         
     }
@@ -199,11 +199,11 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_play) {
     AirAACPlayer* controller = GetAirAACPlayerContextNativeData(context);
     
     if (!controller)
-        return FPANE_CreateError(@"context's AirAACPlayer is null", 0);
+        return AirAACPlayer_FPANE_CreateError(@"context's AirAACPlayer is null", 0);
    
     @try {
         
-        double startTime = FPANE_FREObjectToDouble(argv[0]);
+        double startTime = AirAACPlayer_FPANE_FREObjectToDouble(argv[0]);
         [controller play:startTime];
         
     }
@@ -218,7 +218,7 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_pause) {
     AirAACPlayer* controller = GetAirAACPlayerContextNativeData(context);
     
     if (!controller)
-        return FPANE_CreateError(@"context's AirAACPlayer is null", 0);
+        return AirAACPlayer_FPANE_CreateError(@"context's AirAACPlayer is null", 0);
     
     [controller pause];
     
@@ -231,7 +231,7 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_stop) {
     AirAACPlayer* controller = GetAirAACPlayerContextNativeData(context);
     
     if (!controller)
-        return FPANE_CreateError(@"context's AirAACPlayer is null", 0);
+        return AirAACPlayer_FPANE_CreateError(@"context's AirAACPlayer is null", 0);
     
     @try {
         
@@ -249,9 +249,9 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_getDuration) {
     AirAACPlayer* controller = GetAirAACPlayerContextNativeData(context);
     
     if (!controller)
-        return FPANE_CreateError(@"context's AirAACPlayer is null", 0);
+        return AirAACPlayer_FPANE_CreateError(@"context's AirAACPlayer is null", 0);
     
-     return FPANE_IntToFREObject(controller.player ? 1000*controller.player.duration : 0);
+     return AirAACPlayer_FPANE_IntToFREObject(controller.player ? 1000*controller.player.duration : 0);
     
 }
 
@@ -260,13 +260,13 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_getProgress) {
     AirAACPlayer* controller = GetAirAACPlayerContextNativeData(context);
     
     if (!controller)
-        return FPANE_CreateError(@"context's AirAACPlayer is null", 0);
+        return AirAACPlayer_FPANE_CreateError(@"context's AirAACPlayer is null", 0);
     
     if (controller.player){
         double progress = controller.player.currentTime;
-        return FPANE_IntToFREObject(1000*progress);
+        return AirAACPlayer_FPANE_IntToFREObject(1000*progress);
     } else{
-        return FPANE_IntToFREObject(0);
+        return AirAACPlayer_FPANE_IntToFREObject(0);
     }
     
 }
@@ -276,11 +276,11 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_setVolume) {
     AirAACPlayer* controller = GetAirAACPlayerContextNativeData(context);
     
     if (!controller)
-        return FPANE_CreateError(@"context's AirAACPlayer is null", 0);
+        return AirAACPlayer_FPANE_CreateError(@"context's AirAACPlayer is null", 0);
     
     @try {
         
-        float volume = FPANE_FREObjectToDouble(argv[0]);
+        float volume = AirAACPlayer_FPANE_FREObjectToDouble(argv[0]);
         volume = volume < 0 ? 0 : volume;
         volume = volume > 1 ? 1 : volume;
         
@@ -303,7 +303,7 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_dispose) {
     AirAACPlayer* controller = GetAirAACPlayerContextNativeData(context);
     
     if (!controller)
-        return FPANE_CreateError(@"context's AirAACPlayer is null", 0);
+        return AirAACPlayer_FPANE_CreateError(@"context's AirAACPlayer is null", 0);
     
     [controller dispose];
     
