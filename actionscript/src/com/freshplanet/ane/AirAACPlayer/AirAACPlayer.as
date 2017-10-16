@@ -129,10 +129,14 @@ package com.freshplanet.ane.AirAACPlayer
 	     * If the playback has been paused before, it will continue from this point.
 	     * @param startTime:int the start time in milliseconds
 	     */
-	    public function play(startTime:int = 0):void {
+	    public function play(startTime:int = 0, mode:int = 0):void {
 		    if (!isSupported || state != AirAACPlayerState.READY) return;
 		    startTime = Math.max(0, Math.min(duration, startTime));
-		    _context.call("AirAACPlayer_play", startTime);
+			if (isIOS) {
+				_context.call("AirAACPlayer_play", startTime, mode ? mode : _playbackCategory);
+			} else {
+				_context.call("AirAACPlayer_play", startTime);
+			}
 	    }
 
 	    /** Pause the playback */
@@ -145,6 +149,15 @@ package com.freshplanet.ane.AirAACPlayer
 	    public function stop():void {
 		    if (!isSupported || state != AirAACPlayerState.READY) return;
 		    _context.call("AirAACPlayer_stop");
+	    }
+
+		public static const PLAYBACK_MODE_AMBIENT:int = 1
+		public static const PLAYBACK_MODE_SOLO_AMBIENT:int = 2;
+		public static const PLAYBACK_MODE_MEDIA:int = 3;
+		private static var _playbackCategory:int = 0;
+	    public static function setPlaybackCategory(mode:int = 0):void
+	    {
+	    	_playbackCategory = mode
 	    }
 
 	    // --------------------------------------------------------------------------------------//
