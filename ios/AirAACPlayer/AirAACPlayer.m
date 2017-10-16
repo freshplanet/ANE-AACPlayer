@@ -21,6 +21,7 @@
 @property (nonatomic, readonly) FREContext context;
 @property (nonatomic, strong, readwrite) AVAudioPlayer *player;
 @property (nonatomic, retain) NSMutableData *dataToDownload;
+@property (nonatomic, retain) NSString *playbackCategory;
 @property (nonatomic) float downloadSize;
 @end
 
@@ -31,6 +32,7 @@
     if ((self = [super init])) {
         
         _context = extensionContext;
+        self.playbackCategory = nil;
     }
     
     return self;
@@ -81,6 +83,9 @@
             [self.player setCurrentTime:startTime / 1000];
         }
         [self.player setDelegate:self];
+        if (self.playbackCategory != nil) {
+            [[AVAudioSession sharedInstance] setCategory:self.playbackCategory error:nil];
+        }
         [self.player play];
     }
 }

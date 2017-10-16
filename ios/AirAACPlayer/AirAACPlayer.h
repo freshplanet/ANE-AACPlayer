@@ -21,7 +21,8 @@
     FREContext _context;
     AVAudioPlayer *_player;
     NSURLSessionDataTask *_dataTask;
-}
+    NSString *_playbackCategory;
+};
 
 @end
 
