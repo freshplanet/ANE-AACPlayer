@@ -168,6 +168,26 @@ didCompleteWithError:(NSError *)error {
     [self sendEvent:kAirAACPlayerEvent_AAC_PLAYER_ERROR level:error.localizedDescription];
 }
 
+- (void)setAudioCategory:(int)catNum
+{
+    NSError * err = nil;
+    switch (catNum) {
+        case 1:
+            self.playbackCategory = AVAudioSessionCategoryAmbient;
+            break;
+        case 2:
+            self.playbackCategory = AVAudioSessionCategorySoloAmbient;
+            break;
+        case 3:
+            self.playbackCategory = AVAudioSessionCategoryPlayback;
+            break;
+        default:
+            self.playbackCategory = nil;
+    }
+    if (err != nil) {
+        [self sendLog:[@"Error setting audio category: " stringByAppendingString:[err localizedDescription]]];
+    }
+}
 
 @end
 
@@ -202,12 +222,18 @@ DEFINE_ANE_FUNCTION(AirAACPlayer_load) {
 DEFINE_ANE_FUNCTION(AirAACPlayer_play) {
     
     AirAACPlayer* controller = GetAirAACPlayerContextNativeData(context);
+    if (argc > 1) {
+        @try {
+            NSInteger catInt = AirAACPlayer_FPANE_FREObjectToInt(argv[1]);
+            [controller setAudioCategory:(int)catInt];
+        } @catch (NSException *exception) {
+            [controller sendLog:[@"Exception setting audio category : " stringByAppendingString:exception.reason]];
+        }
+    }
     
     if (!controller)
         return AirAACPlayer_FPANE_CreateError(@"context's AirAACPlayer is null", 0);
-   
     @try {
-        
         double startTime = AirAACPlayer_FPANE_FREObjectToDouble(argv[0]);
         [controller play:startTime];
         
