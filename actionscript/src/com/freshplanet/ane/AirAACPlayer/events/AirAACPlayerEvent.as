@@ -21,6 +21,7 @@ public class AirAACPlayerEvent extends Event {
 
 	public static const AAC_PLAYER_PREPARED:String = "AirAACPlayerEvent_AAC_PLAYER_PREPARED";
 	public static const AAC_PLAYER_DOWNLOAD:String = "AirAACPlayerEvent_AAC_PLAYER_DOWNLOAD";
+	public static const AAC_PLAYER_LOADED:String = "AirAACPlayerEvent_AAC_PLAYER_LOADED";
 	public static const AAC_PLAYER_PLAYBACK_FINISHED:String = "AirAACPlayerEvent_AAC_PLAYER_PLAYBACK_FINISHED";
 
 	private var _downloadProgress:int;

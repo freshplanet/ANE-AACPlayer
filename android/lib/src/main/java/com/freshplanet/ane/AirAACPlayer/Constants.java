@@ -20,5 +20,6 @@ public class Constants {
     public static final String AirAACPlayerEvent_AAC_PLAYER_DOWNLOAD = "AirAACPlayerEvent_AAC_PLAYER_DOWNLOAD";
     public static final String AirAACPlayerEvent_AAC_PLAYER_PLAYBACK_FINISHED = "AirAACPlayerEvent_AAC_PLAYER_PLAYBACK_FINISHED";
     public static final String AirAACPlayerEvent_AAC_PLAYER_ERROR = "AirAACPlayerEvent_AAC_PLAYER_ERROR";
+    public static final String AirAACPlayerEvent_AAC_PLAYER_LOADED = "AirAACPlayerEvent_AAC_PLAYER_LOADED";
 
 }

@@ -24,6 +24,7 @@ import com.freshplanet.ane.AirAACPlayer.functions.GetProgressFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.LoadFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.PauseFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.PlayFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.PrepareFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.SetVolumeFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.StopFunction;
 import com.google.android.exoplayer.ExoPlaybackException;
@@ -55,8 +56,9 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 	public void set_player(ExoPlayer _player) {
 		this._player = _player;
 	}
-	public void set_renderer(MediaCodecAudioTrackRenderer _renderer) {
+	public void setup(MediaCodecAudioTrackRenderer _renderer) {
 		this._renderer = _renderer;
+		_dispatchedPrepared = false;
 	}
 	public void set_fileLoader(FileLoader _fileLoader) {
 		this._fileLoader = _fileLoader;
@@ -95,6 +97,7 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 		Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
 		
 		functions.put("AirAACPlayer_load", new LoadFunction());
+		functions.put("AirAACPlayer_prepare", new PrepareFunction());
 		functions.put("AirAACPlayer_play", new PlayFunction());
 		functions.put("AirAACPlayer_stop", new StopFunction());
 		functions.put("AirAACPlayer_pause", new PauseFunction());

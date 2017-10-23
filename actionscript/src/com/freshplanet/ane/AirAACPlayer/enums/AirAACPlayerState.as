@@ -23,6 +23,7 @@ public class AirAACPlayerState {
 
 	static public const INITIAL                      : AirAACPlayerState = new AirAACPlayerState(Private, "initial");
 	static public const LOADING                      : AirAACPlayerState = new AirAACPlayerState(Private, "loading");
+	static public const LOADED                      : AirAACPlayerState = new AirAACPlayerState(Private, "loaded");
 	static public const READY                        : AirAACPlayerState = new AirAACPlayerState(Private, "ready");
 	static public const ERROR                        : AirAACPlayerState = new AirAACPlayerState(Private, "error");
 	static public const DISPOSED                     : AirAACPlayerState = new AirAACPlayerState(Private, "disposed");

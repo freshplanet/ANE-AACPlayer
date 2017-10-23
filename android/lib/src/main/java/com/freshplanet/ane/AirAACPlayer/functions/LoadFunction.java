@@ -33,6 +33,7 @@ import com.google.android.exoplayer.upstream.ByteArrayDataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import static com.freshplanet.ane.AirAACPlayer.Constants.AirAACPlayerEvent_AAC_PLAYER_DOWNLOAD;
 import static com.freshplanet.ane.AirAACPlayer.Constants.AirAACPlayerEvent_AAC_PLAYER_ERROR;
+import static com.freshplanet.ane.AirAACPlayer.Constants.AirAACPlayerEvent_AAC_PLAYER_LOADED;
 
 public class LoadFunction extends BaseFunction implements FileLoaderListener {
 
@@ -66,8 +67,8 @@ public class LoadFunction extends BaseFunction implements FileLoaderListener {
 				ExtractorSampleSource sampleSource = new ExtractorSampleSource(Uri.parse(this._url), dataSource, allocator,
 						AirAACPlayerExtensionContext.BUFFER_SEGMENT_COUNT * AirAACPlayerExtensionContext.BUFFER_SEGMENT_SIZE);
 				MediaCodecAudioTrackRenderer renderer = new MediaCodecAudioTrackRenderer(sampleSource, MediaCodecSelector.DEFAULT);
-				this._playerContext.set_renderer(renderer);
-				this._playerContext.get_player().prepare(renderer);
+				this._playerContext.setup(renderer);
+				this._playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_LOADED, "");
 
 			}
 			catch (Exception e) {
@@ -107,12 +108,12 @@ public class LoadFunction extends BaseFunction implements FileLoaderListener {
 			ExtractorSampleSource sampleSource = new ExtractorSampleSource(Uri.parse(this._url), dataSource, allocator,
 					AirAACPlayerExtensionContext.BUFFER_SEGMENT_COUNT * AirAACPlayerExtensionContext.BUFFER_SEGMENT_SIZE);
 			MediaCodecAudioTrackRenderer renderer = new MediaCodecAudioTrackRenderer(sampleSource, MediaCodecSelector.DEFAULT);
-			this._playerContext.set_renderer(renderer);
-			this._playerContext.get_player().prepare(renderer);
+			this._playerContext.setup(renderer);
+			this._playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_LOADED, "");
 		}
 		else if (bytes == null) {
 			if(!_playerContext.is_disposed())
-				this._playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "ExoPlayer error");
+				this._playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "ExoPlayer error bytes are null");
 		}
 	}
 

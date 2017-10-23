@@ -73,6 +73,15 @@ package com.freshplanet.ane.AirAACPlayer
 		    _context.call("AirAACPlayer_load", _url);
 	    }
 
+        /**
+         * Android only - Prepare sound
+         */
+        public function prepare():void {
+            if (!isAndroid || state != AirAACPlayerState.LOADED) return;
+            _state = AirAACPlayerState.LOADING;
+            _context.call("AirAACPlayer_prepare");
+        }
+
 	    /**
 	     * Dispose AirAACPlayer
 	     */
@@ -184,6 +193,10 @@ package com.freshplanet.ane.AirAACPlayer
             }
             else if (event.code == AirAACPlayerEvent.AAC_PLAYER_DOWNLOAD) {
 	            dispatchEvent(new AirAACPlayerEvent(event.code, int(event.level)));
+            }
+            else if (event.code == AirAACPlayerEvent.AAC_PLAYER_LOADED) {
+				_state = AirAACPlayerState.LOADED;
+                dispatchEvent(new AirAACPlayerEvent(event.code));
             }
             else if (event.code == AirAACPlayerEvent.AAC_PLAYER_PREPARED) {
 				_state = AirAACPlayerState.READY;
