@@ -115,6 +115,10 @@ public class LoadFunction extends BaseFunction implements FileLoaderListener {
 			if(!_playerContext.is_disposed())
 				this._playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "ExoPlayer error bytes are null");
 		}
+		else if (bytes.length < 1) {
+			if(!_playerContext.is_disposed())
+				this._playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "Downloaded file had 0 bytes");
+		}
 	}
 
 	@Override
