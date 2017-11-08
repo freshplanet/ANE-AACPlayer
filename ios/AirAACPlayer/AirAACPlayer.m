@@ -158,7 +158,9 @@ didCompleteWithError:(NSError *)error {
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player
                        successfully:(BOOL)flag {
-    
+    if(player) {
+        [player setCurrentTime:player.duration];
+    }
     [self sendEvent:kAirAACPlayerEvent_AAC_PLAYER_PLAYBACK_FINISHED];
     
 }
