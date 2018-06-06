@@ -22,7 +22,8 @@ package com.freshplanet.ane.AirAACPlayer
     import flash.events.EventDispatcher;
     import flash.events.StatusEvent;
     import flash.external.ExtensionContext;
-    import flash.system.Capabilities;
+	import flash.filesystem.File;
+	import flash.system.Capabilities;
 
     public class AirAACPlayer extends EventDispatcher
     {
@@ -31,6 +32,37 @@ package com.freshplanet.ane.AirAACPlayer
 	    // 									   PUBLIC API										 //
 	    // 																						 //
 	    // --------------------------------------------------------------------------------------//
+		private static const EXTENSION_CONTEXT_SIMPLE_SOUND:String = "simpleSound";
+		private static var _simpleSoundContext:ExtensionContext;
+		public static function playSimpleSound(path:String, volume:Number = 1.0):void {
+
+			if(!isAndroid)
+				return;
+
+			if(!_simpleSoundContext) {
+		 		_simpleSoundContext = ExtensionContext.createExtensionContext(EXTENSION_ID,  EXTENSION_CONTEXT_SIMPLE_SOUND);
+				_simpleSoundContext.addEventListener(StatusEvent.STATUS, onSimpleSoundStatusEvent)
+
+			}
+
+			var file:File = File.applicationDirectory.resolvePath(path);
+			if(!file.exists) {
+				logSimpleSound("File with path " + path + " does not existing in File.applicationDirectory");
+				return;
+			}
+
+			_simpleSoundContext.call("AirAACPlayer_playSimpleSound", getNativePath(file), volume);
+		}
+
+		private static function onSimpleSoundStatusEvent(event:StatusEvent):void {
+			if(event.code == "log") {
+				logSimpleSound(event.level);
+			}
+		}
+
+		private static function logSimpleSound(message:String):void {
+			trace("[AirAACPlayer - simpleSound] " , message);
+		}
 
 	    /**
 	     * If <code>true</code>, logs will be displayed at the Actionscript level.
@@ -63,6 +95,8 @@ package com.freshplanet.ane.AirAACPlayer
 		    _context.addEventListener(StatusEvent.STATUS, onStatus);
 		    _url = url;
 	    }
+
+
 
 	    /**
 	     * Load sound
@@ -218,5 +252,23 @@ package com.freshplanet.ane.AirAACPlayer
 	    private static function get isAndroid():Boolean {
 		    return Capabilities.manufacturer.indexOf("Android") > -1;
 	    }
+
+		private static function getNativePath(file:File):String
+		{
+
+			if(file.nativePath == "")
+			{
+				var tmpArray:Array = file.url.split('/');
+				var filename:String = tmpArray.pop();
+
+				var newFilename:String = filename.replace('/', '_');
+				var newFile:File = File.applicationStorageDirectory.resolvePath(newFilename);
+
+				file.copyTo(newFile, true);
+				return newFile.nativePath;
+			}
+
+			return file.nativePath;
+		}
     }
 }

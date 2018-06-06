@@ -24,6 +24,7 @@ import com.freshplanet.ane.AirAACPlayer.functions.GetProgressFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.LoadFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.PauseFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.PlayFunction;
+import com.freshplanet.ane.AirAACPlayer.functions.PlaySimpleSoundFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.PrepareFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.SetVolumeFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.StopFunction;
@@ -105,7 +106,6 @@ public class AirAACPlayerExtensionContext extends FREContext implements ExoPlaye
 		functions.put("AirAACPlayer_getProgress", new GetProgressFunction());
 		functions.put("AirAACPlayer_setVolume", new SetVolumeFunction());
 		functions.put("AirAACPlayer_dispose", new DisposeFunction());
-
 		return functions;	
 	}
 

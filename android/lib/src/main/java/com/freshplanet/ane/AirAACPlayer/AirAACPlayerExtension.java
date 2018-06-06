@@ -20,8 +20,17 @@ import com.adobe.fre.FREExtension;
 
 public class AirAACPlayerExtension implements FREExtension {
 
+	public static AirAACPlayerSimpleSoundContext simpleSoundContext;
+
 	public FREContext createContext(String extId) {
-		return new AirAACPlayerExtensionContext();
+
+		if(extId.equals("simpleSound")) {
+			simpleSoundContext = new AirAACPlayerSimpleSoundContext();
+			return simpleSoundContext;
+		}
+		else
+			return new AirAACPlayerExtensionContext();
+
 	}
 
 	public void dispose() {
