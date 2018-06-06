@@ -16,7 +16,7 @@ import java.util.Queue;
 public class AirAACPlayerSimpleSoundContext extends FREContext {
 
     public SoundPool soundPool;
-    public HashMap<String, Integer> loadedSounds;
+    public HashMap<String, Integer> soundCache;
 
 
     public AirAACPlayerSimpleSoundContext() {

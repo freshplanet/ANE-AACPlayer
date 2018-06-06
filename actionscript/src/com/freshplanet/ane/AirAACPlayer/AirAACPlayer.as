@@ -34,7 +34,7 @@ package com.freshplanet.ane.AirAACPlayer
 	    // --------------------------------------------------------------------------------------//
 		private static const EXTENSION_CONTEXT_SIMPLE_SOUND:String = "simpleSound";
 		private static var _simpleSoundContext:ExtensionContext;
-		public static function playSimpleSound(path:String, volume:Number = 1.0):void {
+		public static function playSimpleSound(path:String, cacheSound:Boolean = false, volume:Number = 1.0):void {
 
 			if(!isAndroid)
 				return;
@@ -51,7 +51,7 @@ package com.freshplanet.ane.AirAACPlayer
 				return;
 			}
 
-			_simpleSoundContext.call("AirAACPlayer_playSimpleSound", getNativePath(file), volume);
+			_simpleSoundContext.call("AirAACPlayer_playSimpleSound", getNativePath(file), volume, cacheSound);
 		}
 
 		private static function onSimpleSoundStatusEvent(event:StatusEvent):void {
