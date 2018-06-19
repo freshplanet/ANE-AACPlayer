@@ -47,7 +47,7 @@ package com.freshplanet.ane.AirAACPlayer
 
 			var file:File = File.applicationDirectory.resolvePath(path);
 			if(!file.exists) {
-				logSimpleSound("File with path " + path + " does not existing in File.applicationDirectory");
+				logSimpleSound("File with path " + path + " does not exist in File.applicationDirectory");
 				return;
 			}
 
