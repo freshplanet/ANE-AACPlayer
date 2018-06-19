@@ -15,17 +15,11 @@
 
 package com.freshplanet.ane.AirAACPlayer.functions;
 
-import android.media.AudioAttributes;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
+import android.media.MediaMetadataRetriever;
 import android.media.SoundPool;
-import android.net.Uri;
-import android.os.Build;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREObject;
 import com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension;
-
-import java.util.HashMap;
 
 public class PlaySimpleSoundFunction extends BaseFunction {
 
@@ -37,59 +31,34 @@ public class PlaySimpleSoundFunction extends BaseFunction {
 		final float volume = (float) getDoubleFromFREObject(args[1]);
 		boolean cacheSound = getBooleanFromFREObject(args[2]);
 
-		if(AirAACPlayerExtension.simpleSoundContext.soundPool == null) {
-			// SoundPool constructor is deprecated since API 21
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-			{
-				AudioAttributes attributes = new AudioAttributes.Builder()
-						.setUsage(AudioAttributes.USAGE_GAME)
-						.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-						.build();
-
-				AirAACPlayerExtension.simpleSoundContext.soundPool = new SoundPool.Builder()
-						.setAudioAttributes(attributes)
-						.setMaxStreams(10)
-						.build();
-			}
-			else
-			{
-				AirAACPlayerExtension.simpleSoundContext.soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 100);
-
-			}
-			context.getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
-			AirAACPlayerExtension.simpleSoundContext.soundCache = new HashMap<String, Integer>();
-
-		}
-
-		AirAACPlayerExtension.simpleSoundContext.soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+		AirAACPlayerExtension.simpleSoundContext.getSoundPool().setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
 			@Override
 			public void onLoadComplete(SoundPool soundPool, int i, int i1) {
-				AirAACPlayerExtension.simpleSoundContext.soundPool.play(i, volume, volume, 1, 0, 1);
+				AirAACPlayerExtension.simpleSoundContext.getSoundPool().play(i, volume, volume, 1, 0, 1);
 			}
 		});
 
 
 		try {
 			if(cacheSound) {
-
-				Integer soundId = AirAACPlayerExtension.simpleSoundContext.soundCache.get(path);
+				Integer soundId = AirAACPlayerExtension.simpleSoundContext.getSoundCache().get(path);
 					if( soundId == null) {
-						soundId = AirAACPlayerExtension.simpleSoundContext.soundPool.load(path, 1);
-						AirAACPlayerExtension.simpleSoundContext.soundCache.put(path, soundId);
+						soundId = AirAACPlayerExtension.simpleSoundContext.getSoundPool().load(path, 1);
+						AirAACPlayerExtension.simpleSoundContext.getSoundCache().put(path, soundId);
 					}
 					else {
-						AirAACPlayerExtension.simpleSoundContext.soundPool.play(soundId, volume, volume, 1, 0, 1);
+						AirAACPlayerExtension.simpleSoundContext.getSoundPool().play(soundId, volume, volume, 1, 0, 1);
 					}
 			}
 			else {
 				long soundDuration = getSoundDuration(path);
-				final Integer soundId = AirAACPlayerExtension.simpleSoundContext.soundPool.load(path, 1);
+				final Integer soundId = AirAACPlayerExtension.simpleSoundContext.getSoundPool().load(path, 1);
 				new java.util.Timer().schedule(
 						new java.util.TimerTask() {
 							@Override
 							public void run() {
 								// your code here
-								AirAACPlayerExtension.simpleSoundContext.soundPool.unload(soundId);
+								AirAACPlayerExtension.simpleSoundContext.getSoundPool().unload(soundId);
 							}
 						},
 						soundDuration
@@ -105,9 +74,23 @@ public class PlaySimpleSoundFunction extends BaseFunction {
 	}
 
 	private long getSoundDuration(String path){
-		MediaPlayer player = MediaPlayer.create(AirAACPlayerExtension.simpleSoundContext.getActivity().getApplicationContext(), Uri.parse(path));
-		int duration = player.getDuration();
-		player.release();
+
+		Integer cachedDuration = AirAACPlayerExtension.simpleSoundContext.getDurationCache().get(path);
+		if(cachedDuration != null) {
+			return cachedDuration;
+		}
+
+		MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+		mmr.setDataSource(path);
+		String durationString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+		mmr.release();
+		int duration;
+		try {
+			duration = Integer.parseInt(durationString);
+		} catch (NumberFormatException e) {
+			duration = 20000;// 20 seconds safety for unloading, sound pool should not be used for longer sounds
+		}
+		AirAACPlayerExtension.simpleSoundContext.getDurationCache().put(path, duration);
 		return duration;
 	}
 

@@ -1,27 +1,64 @@
 package com.freshplanet.ane.AirAACPlayer;
 
-import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.media.SoundPool;
-import android.util.SparseArray;
+import android.os.Build;
 
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.freshplanet.ane.AirAACPlayer.functions.PlaySimpleSoundFunction;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 
 public class AirAACPlayerSimpleSoundContext extends FREContext {
 
-    public SoundPool soundPool;
-    public HashMap<String, Integer> soundCache;
+    private SoundPool soundPool;
+    private HashMap<String, Integer> soundCache;
+    private HashMap<String, Integer> durationCache;
 
+    public SoundPool getSoundPool() {
+        if(soundPool == null) {
+            // SoundPool constructor is deprecated since API 21
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            {
+                AudioAttributes attributes = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_GAME)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
 
-    public AirAACPlayerSimpleSoundContext() {
+                soundPool = new SoundPool.Builder()
+                        .setAudioAttributes(attributes)
+                        .setMaxStreams(10)
+                        .build();
+            }
+            else
+            {
+                soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 100);
 
+            }
+            getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        }
+
+        return soundPool;
     }
+
+    public HashMap<String, Integer> getSoundCache() {
+        if(soundCache == null) {
+            soundCache = new HashMap<String, Integer>();
+        }
+        return soundCache;
+    }
+
+    public HashMap<String, Integer> getDurationCache() {
+        if(durationCache == null) {
+            durationCache = new HashMap<String, Integer>();
+        }
+        return durationCache;
+    }
+
 
     @Override
     public Map<String, FREFunction> getFunctions() {
