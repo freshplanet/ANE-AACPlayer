@@ -35,7 +35,23 @@
         <finalizer>com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension</finalizer>
       </applicationDeployment>
     </platform>
-    
+
+    <platform name="Android-ARM64">
+      <applicationDeployment>
+        <nativeLibrary>libAirAACPlayer.jar</nativeLibrary>
+        <initializer>com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension</initializer>
+        <finalizer>com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension</finalizer>
+      </applicationDeployment>
+    </platform>
+
+    <platform name="Android-x86">
+      <applicationDeployment>
+        <nativeLibrary>libAirAACPlayer.jar</nativeLibrary>
+        <initializer>com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension</initializer>
+        <finalizer>com.freshplanet.ane.AirAACPlayer.AirAACPlayerExtension</finalizer>
+      </applicationDeployment>
+    </platform>
+
     <platform name="default"> 
       <applicationDeployment/> 
     </platform> 
