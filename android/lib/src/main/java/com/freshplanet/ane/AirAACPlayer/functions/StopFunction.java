@@ -39,7 +39,7 @@ public class StopFunction extends BaseFunction {
 				playerContext.get_player().setPlayWhenReady(false);
 
 			playerContext.get_player().seekTo(0);
-			playerContext.get_player().stop();
+			playerContext.get_player().setPlayWhenReady(false);
 		}
 		catch (IllegalStateException e) {
 			playerContext.dispatchStatusEventAsync(AirAACPlayerEvent_AAC_PLAYER_ERROR, "" + e.getMessage());
